@@ -9,11 +9,6 @@ namespace WebBanHangOnline.Models;
 [Table("tb_ProductCategory")]
 public partial class TbProductCategory
 {
-    public TbProductCategory()
-    {
-        this.tb_Products = new HashSet<TbProduct>();
-    }
-
     [Key]
     public int Id { get; set; }
 
@@ -37,6 +32,4 @@ public partial class TbProductCategory
 
     [StringLength(150)]
     public string? ModifierBy { get; set; }
-
-    public ICollection<TbProduct> tb_Products { get; set; }
 }

@@ -43,6 +43,4 @@ public partial class TbPost
 
     [StringLength(150)]
     public string? ModifierBy { get; set; }
-
-    public virtual TbPost tb_Post { get; set; }
 }

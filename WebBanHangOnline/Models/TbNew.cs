@@ -44,6 +44,4 @@ public partial class TbNew
 
     [StringLength(150)]
     public string? ModifierBy { get; set; }
-
-    public virtual TbCategory tb_Category { get; set; }
 }

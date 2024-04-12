@@ -9,12 +9,6 @@ namespace WebBanHangOnline.Models;
 [Table("tb_Category")]
 public partial class TbCategory
 {
-    public TbCategory()
-    {
-        this.tb_News = new HashSet<TbNew>();
-        //this.tb_Posts = new HashSet<TbPost>();
-    }
-
     [Key]
     public int Id { get; set; }
 
@@ -46,7 +40,4 @@ public partial class TbCategory
 
     [StringLength(150)]
     public string? ModifierBy { get; set; }
-
-    public ICollection<TbNew> tb_News { get; set; }
-    public ICollection<TbPost> tb_Posts { get; set; }
 }

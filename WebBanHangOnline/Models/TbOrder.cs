@@ -9,11 +9,6 @@ namespace WebBanHangOnline.Models;
 [Table("tb_Order")]
 public partial class TbOrder
 {
-    public TbOrder()
-    {
-        this.tb_OrderDetails = new HashSet<TbOrderDetail>();
-    }
-
     [Key]
     public int Id { get; set; }
 
@@ -45,6 +40,4 @@ public partial class TbOrder
 
     [StringLength(150)]
     public string? ModifierBy { get; set; }
-
-    public ICollection<TbOrderDetail> tb_OrderDetails {  get; set; }
 }

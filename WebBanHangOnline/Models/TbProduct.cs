@@ -53,6 +53,4 @@ public partial class TbProduct
 
     [StringLength(150)]
     public string? ModifierBy { get; set; }
-
-    public virtual TbProductCategory tb_ProductCategory { get; set; }
 }
