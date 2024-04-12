@@ -14,16 +14,8 @@ public partial class TbNew
 
     [StringLength(250)]
     public string? Title { get; set; }
-    
-    public int? CategoryId { get; set; }
 
-    // Foreign key
-    // Khi ta khai báo trong 1 Model TbNew có 1 Model khác thì nó sẽ tạo ra mối liên hệ giữa 2 Model
-    // và qua đó nó sẽ tạo ra mối liên hệ giữa các bảng, các table trên sql server
-    // EfCore sẽ tự động tạo khóa ngoại theo tên khóa chính của TbCategory
-    // để chỉ định tên khóa ngoại theo ý muốn ta sử dụng [ForeinKey("CategoryId")]
-    [ForeignKey("CategoryId")]
-    public TbCategory? Category { get; set; } // Fk -> Pk Id
+    public int? CategoryId { get; set; }
 
     public string? Description { get; set; }
 

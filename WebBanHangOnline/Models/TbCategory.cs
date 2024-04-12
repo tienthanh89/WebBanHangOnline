@@ -10,7 +10,7 @@ namespace WebBanHangOnline.Models;
 public partial class TbCategory
 {
     [Key]
-    public int Id { get; set; } 
+    public int Id { get; set; }
 
     [StringLength(150)]
     public string? Title { get; set; }
