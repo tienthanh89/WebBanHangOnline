@@ -14,6 +14,9 @@ public partial class TbOrderDetail
 
     public int? OrderId { get; set; }
 
+    [ForeignKey("OrderId")]
+    public TbOrder tbOrder { get; set; }
+
     public int? ProductId { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]

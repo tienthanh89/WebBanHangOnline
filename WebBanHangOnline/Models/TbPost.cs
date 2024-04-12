@@ -17,6 +17,9 @@ public partial class TbPost
 
     public int? CategoryId { get; set; }
 
+    [ForeignKey("CategoryId")]
+    public TbCategory Category { get; set; }
+
     public string? Description { get; set; }
 
     public string? Detail { get; set; }
