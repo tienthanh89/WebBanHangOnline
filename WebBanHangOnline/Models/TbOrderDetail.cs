@@ -15,9 +15,12 @@ public partial class TbOrderDetail
     public int? OrderId { get; set; }
 
     [ForeignKey("OrderId")]
-    public TbOrder tbOrder { get; set; }
+    public TbOrder? tbOrder { get; set; }
 
     public int? ProductId { get; set; }
+
+    [ForeignKey("ProductId")]
+    public TbProduct? tbProduct { get; set; }
 
     [Column(TypeName = "decimal(18, 2)")]
     public decimal? Price { get; set; }

@@ -19,7 +19,7 @@ public partial class TbProduct
     public int? ProductCategoryId { get; set; }
 
     [ForeignKey("ProductCategoryId")]
-    public TbProductCategory productCategory { get; set; }
+    public TbProductCategory? productCategory { get; set; }
 
     public string? Description { get; set; }
 

@@ -23,7 +23,7 @@ public partial class TbNew
     // EfCore sẽ tự động tạo khóa ngoại theo tên khóa chính của TbCategory
     // để chỉ định tên khóa ngoại theo ý muốn ta sử dụng [ForeinKey("CategoryId")]
     [ForeignKey("CategoryId")]
-    public TbCategory Category { get; set; } // Fk -> Pk Id
+    public TbCategory? Category { get; set; } // Fk -> Pk Id
 
     public string? Description { get; set; }
 
