@@ -16,6 +16,8 @@ public partial class TbNew
     public string? Title { get; set; }
 
     public int? CategoryId { get; set; }
+    [ForeignKey("CategoryId")]
+    public TbCategory? tbCategory { get; set; }
 
     public string? Description { get; set; }
 
