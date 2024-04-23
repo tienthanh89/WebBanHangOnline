@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebBanHangOnline.Models;
@@ -15,6 +16,8 @@ public partial class TbPost
     [StringLength(150)]
     public string? Title { get; set; }
 
+    public string? Alias { get; set; }
+
     public int? CategoryId { get; set; }
 
     [ForeignKey("CategoryId")]
@@ -24,16 +27,20 @@ public partial class TbPost
 
     public string? Detail { get; set; }
 
-    [StringLength(500)]
-    public string? Image { get; set; }
+    [ValidateNever]
+    public string? ImageUrl { get; set; }
 
-    [Column(TypeName = "decimal(18, 2)")]
-    public decimal? Price { get; set; }
+    [Required(ErrorMessage = "Vui lòng điền SeoTitle")]
+    [MaxLength(250, ErrorMessage = "Nội dung Seotitle chỉ phải ít hơn 250 ký tự.")]
+    public string? SeoTitle { get; set; }
 
-    [Column(TypeName = "decimal(18, 2)")]
-    public decimal? PriceSale { get; set; }
+    [Required(ErrorMessage = "Vui lòng điền SeoDescription")]
+    [MaxLength(500, ErrorMessage = "Nội dung SeoDescription chỉ phải ít hơn 500 ký tự.")]
+    public string? SeoDescription { get; set; }
 
-    public int? Quantity { get; set; }
+    [Required(ErrorMessage = "Vui lòng điền SeoKeyWords")]
+    [MaxLength(250, ErrorMessage = "Nội dung SeoKeyWords chỉ phải ít hơn 250 ký tự.")]
+    public string? SeoKeyWords { get; set; }
 
     [Column(TypeName = "datetime")]
     public DateTime? CreatedDate { get; set; }
@@ -46,4 +53,7 @@ public partial class TbPost
 
     [StringLength(150)]
     public string? ModifierBy { get; set; }
+
+    [Required]
+    public bool IsActive { get; set; }
 }

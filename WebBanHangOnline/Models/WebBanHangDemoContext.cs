@@ -21,7 +21,7 @@ public partial class WebBanHangDemoContext : DbContext
 
     public virtual DbSet<TbContact> TbContacts { get; set; }
 
-    public virtual DbSet<TbNew> TbNews { get; set; }
+    public virtual DbSet<TbNews> TbNews { get; set; }
 
     public virtual DbSet<TbOrder> TbOrders { get; set; }
 
@@ -36,6 +36,7 @@ public partial class WebBanHangDemoContext : DbContext
     public virtual DbSet<TbSubscribe> TbSubscribes { get; set; }
 
     public virtual DbSet<TbSystemSetting> TbSystemSettings { get; set; }
+    public virtual DbSet<TbCategoryWeb> TbCategoryWebs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("name=default");

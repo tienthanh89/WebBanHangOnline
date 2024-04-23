@@ -7,7 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.3" />
+    <Compile Remove="wwwroot\Image\**" />
+    <Compile Remove="wwwroot\ThemeAdmin\**" />
+    <Compile Remove="wwwroot\Theme\**" />
+    <Content Remove="wwwroot\Image\**" />
+    <Content Remove="wwwroot\ThemeAdmin\**" />
+    <Content Remove="wwwroot\Theme\**" />
+    <EmbeddedResource Remove="wwwroot\Image\**" />
+    <EmbeddedResource Remove="wwwroot\ThemeAdmin\**" />
+    <EmbeddedResource Remove="wwwroot\Theme\**" />
+    <None Remove="wwwroot\Image\**" />
+    <None Remove="wwwroot\ThemeAdmin\**" />
+    <None Remove="wwwroot\Theme\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
       <PrivateAssets>all</PrivateAssets>
@@ -19,12 +34,19 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
+    <PackageReference Include="X.PagedList" Version="9.1.2" />
+    <PackageReference Include="X.PagedList.Mvc.Core" Version="9.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="wwwroot\Image\" />
+    <Folder Include="wwwroot\Images\admin\news\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\tasks\build.js" />
+    <None Include="wwwroot\js\tasks\prod.js" />
   </ItemGroup>
 
 </Project>

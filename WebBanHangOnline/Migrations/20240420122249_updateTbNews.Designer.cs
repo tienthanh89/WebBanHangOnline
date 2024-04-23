@@ -12,8 +12,8 @@ using WebBanHangOnline.Models;
 namespace WebBanHangOnline.Migrations
 {
     [DbContext(typeof(WebBanHangDemoContext))]
-    [Migration("20240413101817_initDb")]
-    partial class initDb
+    [Migration("20240420122249_updateTbNews")]
+    partial class updateTbNews
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,6 +79,9 @@ namespace WebBanHangOnline.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
@@ -87,6 +90,7 @@ namespace WebBanHangOnline.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -98,21 +102,26 @@ namespace WebBanHangOnline.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<int?>("Position")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("SeoDescription")
+                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("SeoKeyWords")
+                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("SeoTitle")
+                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
@@ -166,13 +175,16 @@ namespace WebBanHangOnline.Migrations
                     b.ToTable("tb_Contact");
                 });
 
-            modelBuilder.Entity("WebBanHangOnline.Models.TbNew", b =>
+            modelBuilder.Entity("WebBanHangOnline.Models.TbNews", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
@@ -185,14 +197,15 @@ namespace WebBanHangOnline.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Detail")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifierBy")
                         .HasMaxLength(150)
@@ -202,18 +215,22 @@ namespace WebBanHangOnline.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<string>("SeoDescription")
+                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("SeoKeyWords")
+                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("SeoTitle")
+                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
@@ -310,6 +327,9 @@ namespace WebBanHangOnline.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
@@ -365,6 +385,9 @@ namespace WebBanHangOnline.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(150)
@@ -504,7 +527,7 @@ namespace WebBanHangOnline.Migrations
                     b.ToTable("tb_SystemSetting");
                 });
 
-            modelBuilder.Entity("WebBanHangOnline.Models.TbNew", b =>
+            modelBuilder.Entity("WebBanHangOnline.Models.TbNews", b =>
                 {
                     b.HasOne("WebBanHangOnline.Models.TbCategory", "tbCategory")
                         .WithMany()

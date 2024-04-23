@@ -1,0 +1,181 @@
+﻿@model WebBanHangOnline.Models.ViewModels.TbNewsVM
+@{
+    ViewData["Title"] = "Thêm mới tin tức";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section cdn{
+@*     <script src="https://cdn.tiny.cloud/1/thty8oxkq898xj1iv9cifkcu4n3mqz3di55n1krs9mgiq2ss/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+ *@
+}
+
+
+@section asideBody {
+    <ul class="menu-inner py-1">
+        <!-- Dashboard -->
+        <li class="menu-item">
+            <a href="/admin" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+
+        <!-- Danh mục -->
+        <li class="menu-item ">
+            <a href="/admin/category" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Danh mục</div>
+            </a>
+        </li>
+
+        <!-- Tin tức -->
+        <li class="menu-item active">
+            <a href="/admin/news" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Tin tức</div>
+            </a>
+        </li>
+
+        <!-- Bài viết -->
+        <li class="menu-item ">
+            <a href="/Admin/post" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Bài viết</div>
+            </a>
+        </li>
+
+        <!-- Quảng cáo -->
+        <li class="menu-item ">
+            <a href="index.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Quảng cáo</div>
+            </a>
+        </li>
+
+        <!-- Quản lý sản phẩm -->
+        <li class="menu-item ">
+            <a href="index.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+
+        <!-- Cấu hình hệ thống -->
+        <li class="menu-item ">
+            <a href="index.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a href="/news" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-table"></i>
+                <div data-i18n="Tables">Tables</div>
+            </a>
+        </li>
+    </ul>
+}
+
+
+
+
+<!-- Main content -->
+<section class="content">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thông tin danh mục</h3>
+        </div>
+        <div class="card-body">
+            <div class="bs-stepper-content">
+                <!--gửi form tới action Add trong Category và thực thi action đó-->
+                <!--asp-area="admin" asp-action="Add" asp-controller="Category"-->
+                <!--Form muốn tải ảnh lên controller phải có attribute enctype="multipart/form-data"-->
+                <form method="post" enctype="multipart/form-data">
+                    <!-- your steps content here -->
+                    <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.TbNews.Title" class="ms-2">Tiêu đề</label>
+                            <input asp-for="@Model.TbNews.Title" class="form-control " placeholder="Tên danh mục" autofocus>
+                            <span asp-validation-for="@Model.TbNews.Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.TbNews.ImageUrl">Ảnh đại diện</label>
+                            <input type="file" name="file" class="form-control"></>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.TbNews.Description">Mô tả</label>
+                            <input asp-for="@Model.TbNews.Description" class="form-control" placeholder="">
+                            <span asp-validation-for="@Model.TbNews.Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.TbNews.Detail">Chi tiết</label>
+                            <textarea id="textarea" asp-for="@Model.TbNews.Detail" class="form-control" placeholder=""></textarea>
+                            <span asp-validation-for="@Model.TbNews.Detail" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3 d-flex ">
+                            <label asp-for="@Model.TbNews.IsActive">Hiển thị</label>
+                            <input type="checkbox" asp-for="@Model.TbNews.IsActive" class="mx-4 " style="width:6rem" placeholder="" checked>
+                            <span asp-validation-for="@Model.TbNews.Detail" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.TbNews.CategoryId">CategoryId</label>
+                            <select asp-for="@Model.TbNews.CategoryId" asp-items="@Model.CategoryList" class="form-select">
+                                <option disabled selected>--Selecte Category--</option>
+                            </select>
+                            <span asp-validation-for="@Model.TbNews.CategoryId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                        <label asp-for="@Model.TbNews.SeoTitle">SeoTitle</label>
+                        <input asp-for="@Model.TbNews.SeoTitle" class="form-control" placeholder="SeoTitle">
+                        <span asp-validation-for="@Model.TbNews.SeoTitle" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                        <label asp-for="@Model.TbNews.SeoDescription">SeoDescription</label>
+                        <input asp-for="@Model.TbNews.SeoDescription" class="form-control" placeholder="SeoDescription">
+                        <span asp-validation-for="@Model.TbNews.SeoDescription" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-4">
+                        <label asp-for="@Model.TbNews.SeoKeyWords">SeoKeyWords</label>
+                        <input asp-for="@Model.TbNews.SeoKeyWords" class="form-control" placeholder="SeoKeyWords">
+                        <span asp-validation-for="@Model.TbNews.SeoKeyWords" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <a class="btn btn-primary" href="/admin/news">Quay lại</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->
+@section scripts {
+    <script>
+        $(document).ready(() => {
+            tinymce.init({
+                selector: '#textarea',
+                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+            });
+        })        
+    </script>
+
+    @{
+        // Xác thực tự động ở phía máy khách
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+    
+}

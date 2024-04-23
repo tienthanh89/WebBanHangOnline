@@ -2,12 +2,16 @@
 
 namespace WebBanHangOnline.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class HomeController : Controller
     {
-        [Area("/Admin")]
-        [Route("admin")]
+        
         public IActionResult Index()
         {
+            var controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
+            ViewBag.ControllerName = controllerName;
+
+
             return View();
         }
     }

@@ -15,6 +15,8 @@ public partial class TbProduct
     [StringLength(150)]
     public string? Title { get; set; }
 
+    public string? Alias { get; set; }
+
     [Column("ProductCategoryID")]
     public int? ProductCategoryId { get; set; }
     [ForeignKey("ProductCategoryId")]
@@ -55,4 +57,7 @@ public partial class TbProduct
 
     [StringLength(150)]
     public string? ModifierBy { get; set; }
+
+    [Required]
+    public bool IsActive { get; set; }
 }

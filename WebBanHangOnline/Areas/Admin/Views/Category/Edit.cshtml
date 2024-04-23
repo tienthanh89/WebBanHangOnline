@@ -1,0 +1,137 @@
+﻿@model WebBanHangOnline.Models.TbCategory
+@{
+    ViewData["Title"] = "Chỉnh sửa danh mục";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<!--Aside Body-->
+@section asideBody {
+    <ul class="menu-inner py-1">
+        <!-- Dashboard -->
+        <li class="menu-item">
+            <a href="/admin" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+
+        <!-- Danh mục -->
+        <li class="menu-item active">
+            <a href="/admin/category" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Danh mục</div>
+            </a>
+        </li>
+
+        <!-- Tin tức -->
+        <li class="menu-item ">
+            <a href="/admin/news" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Tin tức</div>
+            </a>
+        </li>
+
+        <!-- Bài viết -->
+        <li class="menu-item ">
+            <a href="/Admin/post" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Bài viết</div>
+            </a>
+        </li>
+
+        <!-- Quảng cáo -->
+        <li class="menu-item ">
+            <a href="index" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Quảng cáo</div>
+            </a>
+        </li>
+
+        <!-- Quản lý sản phẩm -->
+        <li class="menu-item ">
+            <a href="index.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+
+        <!-- Cấu hình hệ thống -->
+        <li class="menu-item ">
+            <a href="index.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a href="/news" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-table"></i>
+                <div data-i18n="Tables">Tables</div>
+            </a>
+        </li>
+    </ul>
+}
+
+<!-- Main content -->
+<section class="content">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thông tin danh mục</h3>
+        </div>
+        <div class="card-body">
+            <div class="bs-stepper-content">
+                <!--gửi form tới action Add trong Category và thực thi action đó-->
+                <!--asp-area="admin" asp-action="Add" asp-controller="Category"-->
+                <form method="post">
+                    <input asp-for="Id" hidden />
+                    <!-- your steps content here -->
+                    <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+                        <div class="form-group mb-3">
+                            <label asp-for="Title ">Tên danh mục</label>
+                            <input asp-for="Title"  class="form-control" placeholder="Tên danh mục">
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Description">Mô tả</label>
+                            <input asp-for="Description" class="form-control"  placeholder="Mô tả">
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Position">Vị trí</label>
+                            <input asp-for="Position" class="form-control"  placeholder="Thứ tự">
+                            <span asp-validation-for="Position" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="SeoTitle">SeoTitle</label>
+                            <input asp-for="SeoTitle" class="form-control"  placeholder="SeoTitle">
+                            <span asp-validation-for="SeoTitle" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="SeoDescription">SeoDescription</label>
+                            <input asp-for="SeoDescription" class="form-control" placeholder="SeoDescription">
+                            <span asp-validation-for="SeoDescription" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="SeoKeyWords">SeoKeyWords</label>
+                            <input asp-for="SeoKeyWords" class="form-control" placeholder="SeoKeyWords">
+                            <span asp-validation-for="SeoKeyWords" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <a class="btn btn-primary" href="/admin/category">Quay lại</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->

@@ -1,0 +1,21 @@
+﻿@model IEnumerable<WebBanHangOnline.Models.TbCategoryWeb>
+
+<ul class="menu-inner py-1">
+
+    @foreach (var item in Model)
+    {
+        <li class="menu-item" id="@item.Name" data-name="@item.Name">
+            <a href="/admin/@item.Name" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">@item.Name</div>
+            </a>
+        </li>
+    }
+
+</ul>
+
+@section Scripts {
+    <script>
+
+    </script>
+}

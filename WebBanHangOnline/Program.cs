@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebBanHangOnline.Models;
+using WebBanHangOnline.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<WebBanHangDemoContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("default")));
 
-
+builder.Services.AddScoped<ICategoryWebRepository, CategoryWebRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -20,6 +21,14 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+      name: "areas",
+      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+    );
+});
 
 app.MapControllerRoute(
     name: "default",

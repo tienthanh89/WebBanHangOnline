@@ -1,0 +1,512 @@
+﻿@model X.PagedList.IPagedList<WebBanHangOnline.Models.ViewModels.TbCategoryTbPostVM>
+@using X.PagedList.Mvc.Core;
+
+@{
+    ViewData["Title"] = "Danh sách bài viết";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<!--Aside Body-->
+@* @section asideBody {
+    <ul class="menu-inner py-1">
+        <!-- Dashboard -->
+        <li class="menu-item">
+            <a href="/admin" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+
+        <!-- Danh mục -->
+        <li class="menu-item ">
+            <a href="/admin/category" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Danh mục</div>
+            </a>
+        </li>
+
+        <!-- Tin tức -->
+        <li class="menu-item ">
+            <a href="/admin/news" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Tin tức</div>
+            </a>
+        </li>
+
+        <!-- Bài viết -->
+        <li class="menu-item active">
+            <a href="index.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Bài viết</div>
+            </a>
+        </li>
+
+        <!-- Quảng cáo -->
+        <li class="menu-item ">
+            <a href="index.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Quảng cáo</div>
+            </a>
+        </li>
+
+        <!-- Quản lý sản phẩm -->
+        <li class="menu-item ">
+            <a href="index.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+
+        <!-- Cấu hình hệ thống -->
+        <li class="menu-item ">
+            <a href="index.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a href="/news" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-table"></i>
+                <div data-i18n="Tables">Tables</div>
+            </a>
+        </li>
+    </ul>
+} *@
+
+<!-- Main content -->
+<section id="ListCategory" class="content" style="height:100%">
+    <div class="card" style="height:100%">
+        <div class="card-header d-flex justify-content-between">
+            <h2 class="card-title"><strong>@ViewData["Title"]</strong></h2>
+
+            <div class="card-tools ">
+                <a href="/admin/post/add_mvc" class="btn btn-primary">Thêm mới MVC</a>
+                <a href="#" class="btn btn-primary shadow rounded" data-bs-toggle="modal" data-bs-target="#category-info">Thêm mới Ajax</a>
+                <a class="btn btn-danger" id="btnDeleteAll" onclick="deleteChecked()">Xóa</a>
+            </div>
+        </div>
+        <div class="table-responsive text-nowrap flex-grow-1" >
+            <table class="table ">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" class="form-switch-md" id="select-all" onchange="selectAll()"  style="transform: scale(1.5)" />
+                        <th>STT</th>
+                        <th>Hình ảnh</th>
+                        <th>Tiêu đề</th>
+                        <th>Ngày tạo</th>
+                        <th>Hiển thị</th>
+                        <th>Danh mục</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="list-category" class="table-border-bottom-0">
+                    @if (Model != null)
+                    {
+                        var i = 1;
+                        foreach (var item in @Model)
+                        {
+                            <tr id="trow_@item.Post.Id">
+                                <td>
+                                    <input type="checkbox" class="check-all" style="transform: scale(1.5)" value="@item.Post.Id" id="check_@item.Post.Id"/>
+                                </td>
+                                <td class="stt">@i</td>
+                                <td><img src="@item.Post.ImageUrl" style="width:50px" /></td>
+                                <td>@item.Post.Title</td>
+                                <td>@item.Post.CreatedDate.ToString()</td>
+                                <td class="">
+                                    @if (item.Post.IsActive)
+                                    {
+                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.Post.Id))">
+                                            <i id="isActive_@item.Post.Id" class='bx bx-check-circle text-success' style="transform: scale(1.5)"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.Post.Id))">
+                                            <i id="isActive_@item.Post.Id" class='bx bx-x-circle text-danger' style="transform: scale(1.5)"></i>
+                                        </a>
+                                    }
+                                </td>
+                                <td>
+                                    @{
+                                        if (@item.Category!= null)
+                                        {
+                                                                                                    <span>@item.Category.Title</span>
+                                        }
+                                     }
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" asp-controller="news" asp-action="edit_mvc" asp-route-Id="@item.Post.Id"><i class="bx bx-edit-alt me-1"></i>Sửa MVC</a>
+                                            <a class="dropdown-item" onclick="editCategoryAjax('@item.Post.Id')"><i class="bx bx-edit-alt me-1"></i>Sửa Ajax</a>
+                                            <a class="dropdown-item" asp-controller="news" asp-action="delete" asp-route-Id="@item.Post.Id"><i class="bx bx-trash me-1"></i> Xóa MVC</a>
+                                            <a data-id="@item.Post.Id" class="dropdown-item" onclick="deleteCategory('@(item.Post.Id)')"><i class="bx bx-trash me-1"></i> Xóa Ajax</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            i++;
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td style="border:0" colspan="4">Không có danh mục</td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+            @* @Html.PagedListPager(Model,page=>Url.Action("Index",new{page= page})) *@
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page}))
+
+        </div>
+    </div>
+
+</section>
+<!-- /.content -->
+<!-- Modal Add -->
+<div class="modal fade" id="category-info" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="inforTaskLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Tiêu đề modal-->
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white" id="infotasklabel">Thông tin danh mục</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!--Thân modal-->
+            <form>
+                <div class="modal-body">
+                    <input type="text" id="idCategory" value="" hidden />
+                    <div class="mb-3">
+                        <label for="Title" class="form-label fw-bold">Tên danh mục</label>
+                        <input type="text" class="form-control" id="Title" name="Title" placeholder="Tên danh mục" autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Description" class="form-label fw-bold">Mô tả</label>
+                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Mô tả">
+                    </div>
+                    <div class="mb-3">
+                        <label for="Position" class="form-label fw-bold">Thứ tự</label>
+                        <input type="text" class="form-control" id="Position" name="Position" placeholder="">
+                    </div>
+                    <div class="mb-3">
+                        <label for="SeoTitle" class="form-label fw-bold">SeoTitle</label>
+                        <input type="text" class="form-control" id="SeoTitle" name="SeoTitle" placeholder="">
+                    </div>
+                    <div class="mb-3">
+                        <label for="SeoDescription" class="form-label fw-bold">SeoDescription</label>
+                        <input type="text" class="form-control" id="SeoDescription" name="SeoDescription" placeholder="">
+                    </div>
+                    <div class="mb-3">
+                        <label for="SeoDescription" class="form-label fw-bold">SeoKeyWords</label>
+                        <input type="text" class="form-control" id="SeoKeyWords" name="SeoKeyWords" placeholder="">
+                    </div>
+                </div>
+
+                <!--Cụm nút nhấn-->
+                <div class="modal-footer">
+                    <a href="javascript:void()" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</a>
+                    <a id="add-category" href="javascript:void(0)" class="btn btn-primary">Ok</a>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(() => {
+
+        });
+
+        function deleteChecked() {
+            $(".check-all").each(function (index) {
+                if ($(this).is(":checked")) {
+                    deleteCategory($(this).val());
+                }
+            });
+        }
+
+        // Hàm xóa tin tức
+        // Sau khi xóa tin tức thì cập nhật lại cột STT
+        function deleteCategory(id) {
+            $.ajax({
+                type: 'post',
+                url: '/Admin/Post/Delete',
+                data: { id: id },
+                success: function (result) {
+                    if (result != null) {
+                        $('#trow_' + id).remove();
+                        $(".stt").each(function (index) {
+                            $(this).text(index + 1);
+                        });
+                    }
+                },
+                error: function () { },
+
+            });
+        }
+
+        function changeStatus(id) {
+            $.ajax({
+                type:'post',
+                url:'/Admin/Post/changeStatus',
+                data: {
+                    Id:id
+                },
+                success: function (result) {                    
+                    if (result.isActive == true){
+                        $("#isActive_" + result.id).removeClass("text-danger");
+                        $("#isActive_" + result.id).removeClass("bx-x-circle");
+                        $("#isActive_" + result.id).addClass("bx-check-circle");
+                        $("#isActive_" + result.id).addClass("text-success");
+                    }
+                    else if (result.isActive == false)  
+                    {
+                        $("#isActive_" + result.id).removeClass("text-success");
+                        $("#isActive_" + result.id).removeClass("bx-check-circle");
+                        $("#isActive_" + result.id).addClass("text-danger");
+                        $("#isActive_" + result.id).addClass("bx-x-circle");
+                    }                    
+                }
+            })            
+        }
+
+        function selectAll() {
+            var isCheck = $("#select-all").is(":checked");
+            if (isCheck) {
+                $(".check-all").prop("checked", true);
+            }
+            else {
+                $(".check-all").prop("checked", false);
+            }
+        }
+
+        var controllerName = '@ViewBag.ControllerName';
+        $(".menu-item").each(() => {
+            $(this).removeClass("active");
+        });
+        $("#" + controllerName).addClass("active");
+
+    </script>
+}
+
+@* @section scripts {
+    <script>
+        $(document).ready(() => {
+
+        });
+
+        
+
+
+        // Hàm thêm danh mục khi ấn nút "Thêm danh mục jquery"
+        // Lấy các giá trị trong input và gửi tới controller thông qua ajax
+        // Thêm đối tượng trả về vào table
+        $("#add-category").click(() => {
+            var id = $("#idCategory").val();
+            if (id = "") {
+                $.ajax({
+                    type: 'POST',
+                    url: '/add-jquery',
+                    data: {
+                        Title: $("#Title").val(),
+                        Description: $("#Description").val(),
+                        Position: $("#Position").val(),
+                        SeoTitle: $("#SeoTitle").val(),
+                        SeoDescription: $("#SeoDescription").val(),
+                        SeoKeyWords: $("#SeoKeyWords").val()
+                    },
+                    success: function (result) {
+                        if (result != null) {
+                            // đóng modal
+                            $("#category-info").modal('hide');
+
+                            let lastRow = parseInt($("#list-category tr:last-child td:first-child").text());
+                            if (isNaN(lastRow)) lastRow = 0;
+                            lastRow++;
+                            // chạy hàm load
+                            let r =
+                                `<tr id="trow_${result.id}">
+                                                <td class="stt">${lastRow}</td>
+                                                <td>${result.title}</td>
+                                                <td>${result.position}</td>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                                    <a class="dropdown-item" asp-controller="category" asp-action="edit" asp-route-Id="${result.id}">
+                                                                <i class="bx bx-edit-alt me-1"></i>
+                                                                Sửa
+                                                            </a>
+                                                                    <a class="dropdown-item" asp-controller="category" asp-action="delete" asp-route-Id="${result.id}">
+                                                                <i class="bx bx-trash me-1"></i>
+                                                                Xóa
+                                                            </a>
+                                                                <a data-id="${result.id}" class="dropdown-item" onclick="deleted('${result.id}')">
+                                                                <i class="bx bx-trash me-1"></i>
+                                                                Xóa Jquery
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>`;
+                            $("#list-category").append(r);
+                        }
+                    },
+                    error: function () { },
+                });
+            }
+            else {
+                $.ajax({
+                    type: 'POST',
+                    url: '/editcategoryajax',
+                    data: {
+                        Id: $("#idCategory").val(),
+                        Title: $("#Title").val(),
+                        Description: $("#Description").val(),
+                        Position: $("#Position").val(),
+                        SeoTitle: $("#SeoTitle").val(),
+                        SeoDescription: $("#SeoDescription").val(),
+                        SeoKeyWords: $("#SeoKeyWords").val()
+                    },
+                    success: function (result) {
+                        $("#category-info").modal('hide');
+                        LoadData();
+                    },
+                    error: function (erro) { },
+                })
+            }
+
+        });
+
+        // Hàm xóa danh mục
+        // Sau khi xóa danh mục thì cập nhật lại cột STT
+        function deleteCategory(id) {
+            $.ajax({
+                type: 'post',
+                url: '/test-jquery',
+                data: { id: id },
+                success: function (result) {
+                    if (result != null) {
+                        $('#trow_' + id).remove();
+                        $(".stt").each(function (index) {
+                            $(this).text(index + 1);
+                        });
+                    }
+                },
+                error: function () { },
+
+            });
+        }
+
+        // hàm Load lại toàn bộ thông tin trong database
+        function LoadData() {
+            // xóa danh sách nhiệm vụ cũ
+            $("#list-category").empty();
+            // gửi request
+            $.ajax({
+                type: 'POST',
+                url: '/loaddata',
+                success: function (result) {
+                    if (result.length > 0) {
+                        let i = 1;
+                        result.map((item) => {
+                            let r =
+                                `<tr id="trow_${item.id}">
+                                            <td class="stt">${i}</td>
+                                            <td>${item.title}</td>
+                                            <td>${item.position}</td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" asp-controller="category" asp-action="edit" asp-route-Id="${item.id}">
+                                                            <i class="bx bx-edit-alt me-1"></i>
+                                                            Sửa
+                                                        </a>
+                                                        <a class="dropdown-item" asp-controller="category" asp-action="delete" asp-route-Id="${item.id}">
+                                                            <i class="bx bx-trash me-1"></i>
+                                                            Xóa
+                                                        </a>
+                                                        <a data-id="${item.id}" class="dropdown-item" onclick="deleted('${item.id}')">
+                                                            <i class="bx bx-trash me-1"></i>
+                                                            Xóa Jquery
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>`;
+                            $("#list-category").append(r);
+                            i++;
+                        });
+                    }
+
+                },
+                error: function (error) {
+                    let r = `<h4>Không có nhiệm vụ</h4>`
+                    $("#list-category").append(r);
+
+                }
+            });
+        }
+
+        // Hàm xử lý sự kiện khi ấn nút Edit Ajax
+        function editCategoryAjax(id) {
+            $.ajax({
+                type: 'get',
+                url: '/editcategoryajax',
+                data: { id: id },
+                success: function (result) {
+                    alert(result.title);
+                    RenderModalUpdate(result);
+                },
+            });
+
+        }
+
+        // Hàm xử lý sự kiện hide modal
+        // Sau khi hide modal thì xóa thông tin trong form
+        $("#category-info").on("hide.bs.modal", () => {
+            ClearForm();
+        });
+
+        // Hàm xóa thông tin form
+        function ClearForm() {
+            $("#Title").val("");
+            $("#Description").val("");
+            $("#Position").val("");
+            $("#SeoTitle").val("");
+            $("#SeoDescription").val("");
+            $("#SeoKeyWords").val("");
+        }
+
+        function RenderModalUpdate(result) {
+            $("#idCategory").val(result.id);
+            $("#Title").val(result.title);
+            $("#Description").val(result.description);
+            $("#Position").val(result.position);
+            $("#SeoTitle").val(result.seoTitle);
+            $("#SeoDescription").val(result.seoDescription);
+            $("#SeoKeyWords").val(result.seoKeyWords);
+            $("#category-info").modal('show');
+        }
+
+
+    </script>
+}
+ *@
