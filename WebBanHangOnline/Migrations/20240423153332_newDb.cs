@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebBanHangOnline.Migrations
 {
     /// <inheritdoc />
-    public partial class createDB : Migration
+    public partial class newDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,11 +48,25 @@ namespace WebBanHangOnline.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     ModifierDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    ModifierBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true)
+                    ModifierBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tb_Category", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tb_CategoryWeb",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tb_CategoryWeb", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -152,17 +166,18 @@ namespace WebBanHangOnline.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Alias = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CategoryId = table.Column<int>(type: "int", nullable: true),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Detail = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SeoTitle = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     SeoDescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     SeoKeyWords = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     ModifierDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    ModifierBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true)
+                    ModifierBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -171,7 +186,8 @@ namespace WebBanHangOnline.Migrations
                         name: "FK_tb_New_tb_Category_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "tb_Category",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -185,14 +201,15 @@ namespace WebBanHangOnline.Migrations
                     CategoryId = table.Column<int>(type: "int", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Detail = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Image = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    PriceSale = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SeoTitle = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    SeoDescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    SeoKeyWords = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     ModifierDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    ModifierBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true)
+                    ModifierBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -225,7 +242,8 @@ namespace WebBanHangOnline.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     ModifierDate = table.Column<DateTime>(type: "datetime", nullable: true),
-                    ModifierBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true)
+                    ModifierBy = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -294,6 +312,9 @@ namespace WebBanHangOnline.Migrations
         {
             migrationBuilder.DropTable(
                 name: "tb_Adv");
+
+            migrationBuilder.DropTable(
+                name: "tb_CategoryWeb");
 
             migrationBuilder.DropTable(
                 name: "tb_Contact");

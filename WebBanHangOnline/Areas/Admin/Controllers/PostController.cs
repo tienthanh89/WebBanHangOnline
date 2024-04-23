@@ -34,20 +34,28 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         //    return View(dbSetTbPostVM);
         //}
 
-        public IActionResult Index(int? page)
+        public IActionResult Index( int? page, string searchStr = "")
         {
-            var controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
-            ViewBag.ControllerName = controllerName;
-
-            var pageSize = 2;
-            int pageNumber = page == null || page < 1 ? 1 : page.Value;
-            
             var items = _db.TbPosts.Select(n => new TbCategoryTbPostVM
             {
                 Post = n,
                 Category = n.tbCategory,
             }).AsNoTracking().OrderByDescending(x => x.Post.Id);
+
+            if (searchStr != "")
+            {
+                 items = _db.TbPosts.Select(n => new TbCategoryTbPostVM
+                {
+                    Post = n,
+                    Category = n.tbCategory,
+                }).AsNoTracking().Where(x=>x.Post.Title.ToLower().Contains(searchStr.ToLower())).OrderByDescending(x => x.Post.Id);
+                
+            }
+            
+            var pageSize = 7;
+            int pageNumber = page == null || page < 1 ? 1 : page.Value;           
             PagedList<TbCategoryTbPostVM> lst = new PagedList<TbCategoryTbPostVM>(items, pageNumber, pageSize);
+            
             return View(lst);
         }
 
@@ -224,6 +232,19 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
             }
             return Ok(item);
         }
+
+        #region API CALLS
+        public IActionResult GetAll()
+        {
+            var items = _db.TbPosts.Select(n => new TbCategoryTbPostVM
+            {
+                Post = n,
+                Category = n.tbCategory,
+            }).AsNoTracking().OrderByDescending(x => x.Post.Id);
+
+            return Json(new {data = items});
+        }
+        #endregion
     }
 }
 

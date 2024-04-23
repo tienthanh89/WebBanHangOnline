@@ -12,8 +12,8 @@ using WebBanHangOnline.Models;
 namespace WebBanHangOnline.Migrations
 {
     [DbContext(typeof(WebBanHangDemoContext))]
-    [Migration("20240420122249_updateTbNews")]
-    partial class updateTbNews
+    [Migration("20240423153332_newDb")]
+    partial class newDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,6 +94,9 @@ namespace WebBanHangOnline.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ModifierBy")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
@@ -128,6 +131,23 @@ namespace WebBanHangOnline.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("tb_Category");
+                });
+
+            modelBuilder.Entity("WebBanHangOnline.Models.TbCategoryWeb", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tb_CategoryWeb");
                 });
 
             modelBuilder.Entity("WebBanHangOnline.Models.TbContact", b =>
@@ -187,6 +207,7 @@ namespace WebBanHangOnline.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CategoryId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("CreatedBy")
@@ -206,6 +227,9 @@ namespace WebBanHangOnline.Migrations
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ModifierBy")
                         .HasMaxLength(150)
@@ -346,9 +370,11 @@ namespace WebBanHangOnline.Migrations
                     b.Property<string>("Detail")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ModifierBy")
                         .HasMaxLength(150)
@@ -357,14 +383,20 @@ namespace WebBanHangOnline.Migrations
                     b.Property<DateTime?>("ModifierDate")
                         .HasColumnType("datetime");
 
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<string>("SeoDescription")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                    b.Property<decimal?>("PriceSale")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<string>("SeoKeyWords")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<string>("SeoTitle")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("Title")
                         .HasMaxLength(150)
@@ -405,6 +437,9 @@ namespace WebBanHangOnline.Migrations
                     b.Property<string>("Image")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("ModifierBy")
                         .HasMaxLength(150)
@@ -531,7 +566,9 @@ namespace WebBanHangOnline.Migrations
                 {
                     b.HasOne("WebBanHangOnline.Models.TbCategory", "tbCategory")
                         .WithMany()
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("tbCategory");
                 });

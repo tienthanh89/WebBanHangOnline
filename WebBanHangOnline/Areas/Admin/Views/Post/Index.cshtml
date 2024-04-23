@@ -7,7 +7,7 @@
 }
 
 <!--Aside Body-->
-@* @section asideBody {
+@section asideBody {
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
         <li class="menu-item">
@@ -72,7 +72,23 @@
             </a>
         </li>
     </ul>
-} *@
+}
+
+@section search{
+    <!-- Search -->
+    <div class="navbar-nav align-items-center flex-grow-1">
+        <form asp-action="index" asp-controller="post" method="get" class="flex-grow-1 d-flex">
+            <div class="nav-item d-flex align-items-center d-flex flex-grow-1">
+                <button type="submit" class="btn btn-info btnflat">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" name="searchStr" class="form-control mx-3 border-1 flex-grow-1" placeholder="Search..." />
+            </div>
+        </form>
+        
+    </div>
+    <!-- /Search -->
+}
 
 <!-- Main content -->
 <section id="ListCategory" class="content" style="height:100%">
@@ -86,8 +102,8 @@
                 <a class="btn btn-danger" id="btnDeleteAll" onclick="deleteChecked()">Xóa</a>
             </div>
         </div>
-        <div class="table-responsive text-nowrap flex-grow-1" >
-            <table class="table ">
+        <div class="table-responsive text-nowrap flex-grow-1">
+            <table id="tblData" class="table">
                 <thead>
                     <tr>
                         <th>
@@ -109,7 +125,7 @@
                         {
                             <tr id="trow_@item.Post.Id">
                                 <td>
-                                    <input type="checkbox" class="check-all" style="transform: scale(1.5)" value="@item.Post.Id" id="check_@item.Post.Id"/>
+                                    <input type="checkbox" class="check-all" style="transform: scale(1.5)" value="@item.Post.Id" id="check_@item.Post.Id" />
                                 </td>
                                 <td class="stt">@i</td>
                                 <td><img src="@item.Post.ImageUrl" style="width:50px" /></td>
@@ -131,11 +147,11 @@
                                 </td>
                                 <td>
                                     @{
-                                        if (@item.Category!= null)
+                                        if (@item.Category != null)
                                         {
-                                                                                                    <span>@item.Category.Title</span>
+                                            <span>@item.Category.Title</span>
                                         }
-                                     }
+                                    }
                                 </td>
                                 <td>
                                     <div class="dropdown">
@@ -143,9 +159,9 @@
                                             <i class="bx bx-dots-vertical-rounded"></i>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" asp-controller="news" asp-action="edit_mvc" asp-route-Id="@item.Post.Id"><i class="bx bx-edit-alt me-1"></i>Sửa MVC</a>
+                                            <a class="dropdown-item" asp-controller="post" asp-action="edit_mvc" asp-route-Id="@item.Post.Id"><i class="bx bx-edit-alt me-1"></i>Sửa MVC</a>
                                             <a class="dropdown-item" onclick="editCategoryAjax('@item.Post.Id')"><i class="bx bx-edit-alt me-1"></i>Sửa Ajax</a>
-                                            <a class="dropdown-item" asp-controller="news" asp-action="delete" asp-route-Id="@item.Post.Id"><i class="bx bx-trash me-1"></i> Xóa MVC</a>
+                                            <a class="dropdown-item" asp-controller="post" asp-action="delete" asp-route-Id="@item.Post.Id"><i class="bx bx-trash me-1"></i> Xóa MVC</a>
                                             <a data-id="@item.Post.Id" class="dropdown-item" onclick="deleteCategory('@(item.Post.Id)')"><i class="bx bx-trash me-1"></i> Xóa Ajax</a>
                                         </div>
                                     </div>
@@ -164,11 +180,20 @@
                 </tbody>
 
             </table>
-            @* @Html.PagedListPager(Model,page=>Url.Action("Index",new{page= page})) *@
-            @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page}))
-
         </div>
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
+        {            
+            MaximumPageNumbersToDisplay = 2,
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" },
+
+        })
     </div>
+
+
+    @*  *@
+
+
 
 </section>
 <!-- /.content -->
@@ -223,7 +248,10 @@
 </div>
 
 
+
+
 @section scripts{
+    @* <script src="~/Admin/js/post.js"></script> *@
     <script>
         $(document).ready(() => {
 
@@ -292,11 +320,11 @@
             }
         }
 
-        var controllerName = '@ViewBag.ControllerName';
-        $(".menu-item").each(() => {
-            $(this).removeClass("active");
-        });
-        $("#" + controllerName).addClass("active");
+        // var controllerName = '@ViewBag.ControllerName';
+        // $(".menu-item").each(() => {
+        //     $(this).removeClass("active");
+        // });
+        // $("#" + controllerName).addClass("active");
 
     </script>
 }

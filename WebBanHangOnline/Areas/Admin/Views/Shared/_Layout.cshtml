@@ -37,6 +37,8 @@
 
     <link rel="stylesheet" href="~/Admin/assets/vendor/libs/apex-charts/apex-charts.css" />
 
+    <!--Datatable-->
+    @* <link rel="stylesheet" href="//cdn.datatables.net/2.0.5/css/dataTables.dataTables.min.css" /> *@
 
     <!-- Page CSS -->
     <!-- Helpers -->
@@ -120,9 +122,9 @@
 
                 <div class="menu-inner-shadow"></div>
 
-                @* @RenderSection("asideBody", required: false) *@
+                @RenderSection("asideBody", required: false)
 
-                @await Component.InvokeAsync("CategoryWeb")
+                @* @await Component.InvokeAsync("CategoryWeb") *@
             </aside>
             <!-- / Menu -->
             <!-- Layout container -->
@@ -139,15 +141,7 @@
 
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                         <!-- Search -->
-                        <div class="navbar-nav align-items-center">
-                            <div class="nav-item d-flex align-items-center">
-                                <i class="bx bx-search fs-4 lh-0"></i>
-                                <input type="text"
-                                       class="form-control border-0 shadow-none"
-                                       placeholder="Search..."
-                                       aria-label="Search..." />
-                            </div>
-                        </div>
+                        @RenderSection("search",required: false)
                         <!-- /Search -->
 
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -288,10 +282,11 @@
     <!-- Page JS -->
     <script src="~/Admin/assets/js/dashboards-analytics.js"></script>
 
+    <!--Datatable-->
+    @* <script src="//cdn.datatables.net/2.0.5/js/dataTables.min.js" asp-append-version="true"></script> *@
+
+    @RenderSection("scripts", required: false)
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-
-    
-    @RenderSection("scripts", required: false)
 </body>
 </html>
