@@ -19,24 +19,35 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
             _db = db;
             _webHostEnvironment = webHostEnvironment;
         }
+
+
         //public IActionResult Index()
         //{
         //    //var items = _db.TbNews.Include(n => n.tbCategory).OrderByDescending(x => x.Id).ToList();
         //    //return View(items);
+        //    var categories = _db.TbCategories;
 
         //    DbSetTbNewsVM dbSetTbNewsVM = new DbSetTbNewsVM()
         //    {
         //        dbSetTbNews = _db.TbNews,
-        //        CategoryList = _db.TbCategories.Select(u => new SelectListItem { Text = u.Title, Value = u.Id.ToString() })
+                
+
+
         //    };
+        //    var lst = _db.TbNews.Include(x => x.tbCategory).Include(x => x.tbCategory.Id);
+        //    if (dbSetTbNewsVM.dbSetTbNews != null) {
+        //        foreach(var item in dbSetTbNewsVM.dbSetTbNews)
+        //        {
+        //            dbSetTbNewsVM.CategoryList = dbSetTbNewsVM.dbSetTbNews.Select(n => item.ContainsKey(n.CategoryId) ? categories[n.CategoryId] : null)
+        //        }
+        //    }
+
         //    return View(dbSetTbNewsVM);
         //}
 
+        
         public IActionResult Index()
         {
-            var controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
-            ViewBag.ControllerName = controllerName;
-
             var items = _db.TbNews.Select(n => new TbCategoryTbNewsVM
             {
                 News = n,
@@ -44,6 +55,10 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
             }).OrderByDescending(x => x.News.Id);
             return View(items);
         }
+        
+
+
+
 
         //public IActionResult Index()
         //{
@@ -72,7 +87,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add_MVC(TbNewsVM tbNewsVM, IFormFile? file, int? id)
+        public IActionResult Add_MVC(TbNewsVM tbNewsVM, IFormFile? file)
         {
             if (ModelState.IsValid)
             {

@@ -41,19 +41,19 @@
             </a>
         </li>
 
-        <!-- Quảng cáo -->
+        <!-- Quản lý sản phẩm -->
         <li class="menu-item ">
-            <a href="index.html" class="menu-link">
+            <a href="/admin/product" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Quảng cáo</div>
+                <div data-i18n="Analytics">Quản lý sản phẩm</div>
             </a>
         </li>
 
-        <!-- Quản lý sản phẩm -->
+        <!-- Danh mục sản phẩm -->
         <li class="menu-item ">
-            <a href="index.html" class="menu-link">
+            <a href="/admin/productcategory" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Dashboard</div>
+                <div data-i18n="Analytics">Danh mục sản phẩm</div>
             </a>
         </li>
 
@@ -89,7 +89,89 @@
 }
 
 <h1>Admin View</h1>
+@* Transactions Table *@
+<div class="card">
+    <div class="card-datatable table-responsive pb-0">
+        <table id="transactionsTable" class="table">
+            <thead class="border-top">
+                <tr class="text-nowrap">
+                    <th></th>
+                    <th>Html.DisplayNameFor(model => model.Id)</th>
+                    <th>
+                        Html.DisplayNameFor(model => model.Customer)
+                    </th>
+                    <th>
+                        Html.DisplayNameFor(model => model.TransactionDate)
+                    </th>
+                    <th>
+                        Html.DisplayNameFor(model => model.DueDate)                    </th>
+                    <th>
+                        Html.DisplayNameFor(model => model.Total)
+                    </th>
+                    <th>
+                        Html.DisplayNameFor(model => model.Status)
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model?.Any() == true)
+                {
+                    @foreach (var item in Model)
+                    {
+                        string statusClass = "info"; // Default value if item.Status is null or doesn't match any case
 
+                        if (!string.IsNullOrWhiteSpace(item.Status))
+                        {
+                            string lowerCaseStatus = item.Status.ToLower();
+
+                            if (lowerCaseStatus == "paid")
+                            {
+                                statusClass = "success";
+                            }
+                            else if (lowerCaseStatus == "due")
+                            {
+                                statusClass = "warning";
+                            }
+                            else if (lowerCaseStatus == "canceled")
+                            {
+                                statusClass = "danger";
+                            }
+                        }
+
+                        <tr>
+                            <td></td>
+                            <td>
+                                Html.DisplayFor(modelItem => item.Id)
+                            </td>
+                            <td>
+                                Html.DisplayFor(modelItem => item.Customer)
+                            </td>
+                            <td>
+                                item.TransactionDate.ToString("dd MMMM, yy")
+                            </td>
+                            <td>
+                                @item.ToString("dd MMMM, yy")
+                            </td>
+                            <td>
+                                @item.Total
+                            </td>
+                            <td>
+                                <div class="badge bg-@statusClass rounded-pill">
+                                    Html.DisplayFor(modelItem => item.Status)
+                                </div>
+                            </td>
+                            <td class="text-nowrap">
+                                <a asp-action="Update" asp-route-id="item.Id" class="btn btn-sm btn-icon shadow-none"><i class='bx bx-edit'></i></a>
+                                <a href="/Transactions/Delete/item.Id" class="btn btn-sm btn-icon shadow-none delete-transaction" data-transaction-username="Html.DisplayFor(modelItem => item.Customer)"><i class="bx bx-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 
 @* @section scripts{

@@ -1,6 +1,6 @@
-﻿@model IEnumerable<WebBanHangOnline.Models.ViewModels.TbCategoryTbNewsVM>
+﻿@model IEnumerable<WebBanHangOnline.Models.TbProductCategory>
 @{
-    ViewData["Title"] = "Danh sách tin tức";
+    ViewData["Title"] = "Danh mục sản phảm";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
@@ -24,7 +24,7 @@
         </li>
 
         <!-- Tin tức -->
-        <li class="menu-item active">
+        <li class="menu-item ">
             <a href="/admin/news" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Analytics">Tin tức</div>
@@ -48,7 +48,7 @@
         </li>
 
         <!-- Danh mục sản phẩm -->
-        <li class="menu-item ">
+        <li class="menu-item active">
             <a href="/admin/productcategory" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Analytics">Danh mục sản phẩm</div>
@@ -75,15 +75,14 @@
 @section search {
     <!-- Search -->
     <div class="navbar-nav align-items-center">
-        <div class="nav-item d-flex align-items-center">
-            <button type="submit" class="btn btn-light btn-sm">
-                <i class="bx bx-search fs-4 lh-0"></i>
-            </button>
-            <input type="text"
-                   class="form-control border-0 shadow-none"
-                   placeholder="Search..."
-                   aria-label="Search..." />
-        </div>
+        <form asp-action="index" asp-controller="post" method="get" class="flex-grow-1 d-flex">
+            <div class="nav-item d-flex align-items-center d-flex flex-grow-1">
+                <button type="submit" class="btn btn-light btn-sm">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text" name="searchStr" class="form-control mx-3 border-1 flex-grow-1" placeholder="Search..." />
+            </div>
+        </form>
     </div>
     <!-- /Search -->
 }
@@ -92,26 +91,22 @@
 <section id="ListCategory" class="content" style="height:100%">
     <div class="card" style="height:100%">
         <div class="card-header d-flex justify-content-between">
-            <h2 class="card-title"><strong>@ViewData["Title"]</strong></h2>
+            <h2 class="card-title"><strong>Danh sách danh mục</strong></h2>
 
             <div class="card-tools ">
-                <a href="/admin/news/add_mvc" class="btn btn-primary">Thêm mới MVC</a>
+                <a href="/admin/ProductCategory/add_mvc" class="btn btn-primary">Thêm mới MVC</a>
                 <a href="#" class="btn btn-primary shadow rounded" data-bs-toggle="modal" data-bs-target="#category-info">Thêm mới Ajax</a>
-                <a class="btn btn-danger" id="btnDeleteAll" onclick="deleteChecked()">Xóa</a>
             </div>
         </div>
-        <div class="table-responsive text-nowrap flex-grow-1" >
+        <div class="table-responsive text-nowrap flex-grow-1">
             <table class="table ">
                 <thead>
                     <tr>
-                        <th>
-                            <input type="checkbox" class="form-switch-md" id="select-all" onchange="selectAll()"  style="transform: scale(1.5)" />
+                        <th><input type="checkbox" class="form-switch-md" id="select-all"  style="transform: scale(1.5)" />
                         <th>STT</th>
-                        <th>Hình ảnh</th>
-                        <th>Tiêu đề</th>
+                        <th>Tên danh mục</th>
                         <th>Ngày tạo</th>
                         <th>Hiển thị</th>
-                        <th>Danh mục</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -121,35 +116,26 @@
                         var i = 1;
                         foreach (var item in @Model)
                         {
-                            <tr id="trow_@item.News.Id">
+                            <tr id="trow_@item.Id">
                                 <td>
-                                    <input type="checkbox" class="check-all" style="transform: scale(1.5)" value="@item.News.Id" id="check_@item.News.Id"/>
+                                    <input type="checkbox" class="check-all" style="transform: scale(1.5)" value="@item.Id" id="check_@item.Id" />
                                 </td>
                                 <td class="stt">@i</td>
-                                <td><img src="@item.News.ImageUrl" style="width:50px" /></td>
-                                <td>@item.News.Title</td>
-                                <td>@item.News.CreatedDate.ToString()</td>
+                                <td>@item.Title</td>
+                                <td>@item.CreatedDate.ToString()</td>
                                 <td class="">
-                                    @if (item.News.IsActive)
+                                    @if (item.IsActive == true)
                                     {
-                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.News.Id))">
-                                            <i id="isActive_@item.News.Id" class='bx bx-check-circle text-success' style="transform: scale(1.5)"></i>
+                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.Id))">
+                                            <i id="isActive_@item.Id" class='bx bx-check-circle text-success' style="transform: scale(1.5)"></i>
                                         </a>
                                     }
                                     else
                                     {
-                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.News.Id))">
-                                            <i id="isActive_@item.News.Id" class='bx bx-x-circle text-danger' style="transform: scale(1.5)"></i>
+                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.Id))">
+                                            <i id="isActive_@item.Id" class='bx bx-x-circle text-danger' style="transform: scale(1.5)"></i>
                                         </a>
                                     }
-                                </td>
-                                <td>
-                                    @{
-                                        if (@item.Category!= null)
-                                        {
-                                                                                                    <span>@item.Category.Title</span>
-                                        }
-                                     }
                                 </td>
                                 <td>
                                     <div class="dropdown">
@@ -157,10 +143,10 @@
                                             <i class="bx bx-dots-vertical-rounded"></i>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" asp-controller="news" asp-action="edit_mvc" asp-route-Id="@item.News.Id"><i class="bx bx-edit-alt me-1"></i>Sửa MVC</a>
-                                            <a class="dropdown-item" onclick="editCategoryAjax('@item.News.Id')"><i class="bx bx-edit-alt me-1"></i>Sửa Ajax</a>
-                                            <a class="dropdown-item" asp-controller="news" asp-action="delete" asp-route-Id="@item.News.Id"><i class="bx bx-trash me-1"></i> Xóa MVC</a>
-                                            <a data-id="@item.News.Id" class="dropdown-item" onclick="deleteCategory('@(item.News.Id)')"><i class="bx bx-trash me-1"></i> Xóa Ajax</a>
+                                            <a class="dropdown-item" asp-controller="productcategory" asp-action="edit_mvc" asp-route-Id="@item.Id"><i class="bx bx-edit-alt me-1"></i>Sửa MVC</a>
+                                            <a class="dropdown-item" onclick="editCategoryAjax('@item.Id')"><i class="bx bx-edit-alt me-1"></i>Sửa Ajax</a>
+                                            <a class="dropdown-item" asp-controller="product" asp-action="delete" asp-route-Id="@item.Id"><i class="bx bx-trash me-1"></i> Xóa MVC</a>
+                                            <a data-id="@item.Id" class="dropdown-item" onclick="deleteCategory('@(item.Id)')"><i class="bx bx-trash me-1"></i> Xóa Ajax</a>
                                         </div>
                                     </div>
                                 </td>
@@ -193,140 +179,90 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <!--Thân modal-->
-            <form>
-                <div class="modal-body">
-                    <input type="text" id="idCategory" value="" hidden />
-                    <div class="mb-3">
-                        <label for="Title" class="form-label fw-bold">Tên danh mục</label>
-                        <input type="text" class="form-control" id="Title" name="Title" placeholder="Tên danh mục" autofocus>
-                    </div>
-                    <div class="mb-3">
-                        <label for="Description" class="form-label fw-bold">Mô tả</label>
-                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Mô tả">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Position" class="form-label fw-bold">Thứ tự</label>
-                        <input type="text" class="form-control" id="Position" name="Position" placeholder="">
-                    </div>
-                    <div class="mb-3">
-                        <label for="SeoTitle" class="form-label fw-bold">SeoTitle</label>
-                        <input type="text" class="form-control" id="SeoTitle" name="SeoTitle" placeholder="">
-                    </div>
-                    <div class="mb-3">
-                        <label for="SeoDescription" class="form-label fw-bold">SeoDescription</label>
-                        <input type="text" class="form-control" id="SeoDescription" name="SeoDescription" placeholder="">
-                    </div>
-                    <div class="mb-3">
-                        <label for="SeoDescription" class="form-label fw-bold">SeoKeyWords</label>
-                        <input type="text" class="form-control" id="SeoKeyWords" name="SeoKeyWords" placeholder="">
-                    </div>
+            <div class="modal-body">
+                <input type="text" id="idCategory" value="" hidden />
+                <div class="mb-3">
+                    <label for="Title" class="form-label fw-bold">Tên danh mục</label>
+                    <input type="text" class="form-control" id="Title" name="Title" placeholder="Tên danh mục" autofocus>
                 </div>
+                <div class="mb-3">
+                    <label for="Description" class="form-label fw-bold">Mô tả</label>
+                    <input type="text" class="form-control" id="Description" name="Description" placeholder="Mô tả">
+                </div>
+                <div class="mb-3">
+                    <label for="Position" class="form-label fw-bold">Thứ tự</label>
+                    <input type="text" class="form-control" id="Position" name="Position" placeholder="">
+                </div>
+                <div class="mb-3">
+                    <label for="SeoTitle" class="form-label fw-bold">SeoTitle</label>
+                    <input type="text" class="form-control" id="SeoTitle" name="SeoTitle" placeholder="">
+                </div>
+                <div class="mb-3">
+                    <label for="SeoDescription" class="form-label fw-bold">SeoDescription</label>
+                    <input type="text" class="form-control" id="SeoDescription" name="SeoDescription" placeholder="">
+                </div>
+                <div class="mb-3">
+                    <label for="SeoDescription" class="form-label fw-bold">SeoKeyWords</label>
+                    <input type="text" class="form-control" id="SeoKeyWords" name="SeoKeyWords" placeholder="">
+                </div>
+            </div>
 
-                <!--Cụm nút nhấn-->
-                <div class="modal-footer">
-                    <a href="javascript:void()" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</a>
-                    <a id="add-category" href="javascript:void(0)" class="btn btn-primary">Ok</a>
-                </div>
-            </form>
-            
+            <!--Cụm nút nhấn-->
+            <div class="modal-footer">
+                <a href="javascript:void()" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</a>
+                <a id="add-category" href="javascript:void(0)" class="btn btn-primary">Ok</a>
+            </div>
         </div>
     </div>
 </div>
 
-
-@section scripts{
+@section scripts {
     <script>
         $(document).ready(() => {
 
         });
 
-        function deleteChecked() {
-            $(".check-all").each(function (index) {
-                if ($(this).is(":checked")) {
-                    deleteCategory($(this).val());
-                }
-            });
-        }
+        $("#select-all").change(() => {
+            let isCheck = $("#select-all").is(":checked");
+            if (isCheck) {
+                $(".check-all").prop("checked", true);
+            }
+            else{
+                $(".check-all").prop("checked", false);
+            }
+        });
 
-        // Hàm xóa tin tức
-        // Sau khi xóa tin tức thì cập nhật lại cột STT
-        function deleteCategory(id) {
-            $.ajax({
-                type: 'post',
-                url: '/Admin/News/Delete',
-                data: { id: id },
-                success: function (result) {
-                    if (result != null) {
-                        $('#trow_' + id).remove();
-                        $(".stt").each(function (index) {
-                            $(this).text(index + 1);
-                        });
-                    }
-                },
-                error: function () { },
-
-            });
-        }
 
         function changeStatus(id) {
             $.ajax({
-                type:'post',
-                url:'/Admin/News/changeStatus',
+                type: 'post',
+                url: '/Admin/productcategory/changeStatus',
                 data: {
-                    Id:id
+                    Id: id
                 },
-                success: function (result) {                    
-                    if (result.isActive == true){
+                success: function (result) {
+                    if (result.isActive == true) {
                         $("#isActive_" + result.id).removeClass("text-danger");
                         $("#isActive_" + result.id).removeClass("bx-x-circle");
                         $("#isActive_" + result.id).addClass("bx-check-circle");
                         $("#isActive_" + result.id).addClass("text-success");
                     }
-                    else if (result.isActive == false)  
-                    {
+                    else if (result.isActive == false) {
                         $("#isActive_" + result.id).removeClass("text-success");
                         $("#isActive_" + result.id).removeClass("bx-check-circle");
                         $("#isActive_" + result.id).addClass("text-danger");
                         $("#isActive_" + result.id).addClass("bx-x-circle");
-                    }                    
+                    }
                 }
-            })            
+            })
         }
-
-        function selectAll() {
-            var isCheck = $("#select-all").is(":checked");
-            if (isCheck) {
-                $(".check-all").prop("checked", true);
-            }
-            else {
-                $(".check-all").prop("checked", false);
-            }
-        }
-
-        // var controllerName = '@ViewBag.ControllerName';
-        // $(".menu-item").each(() => {
-        //     $(this).removeClass("active");
-        // });
-        // $("#" + controllerName).addClass("active");
-
-    </script>
-}
-
-@* @section scripts {
-    <script>
-        $(document).ready(() => {
-
-        });
-
-        
-
 
         // Hàm thêm danh mục khi ấn nút "Thêm danh mục jquery"
         // Lấy các giá trị trong input và gửi tới controller thông qua ajax
         // Thêm đối tượng trả về vào table
         $("#add-category").click(() => {
             var id = $("#idCategory").val();
-            if (id = "") {
+            if (id == "") {
                 $.ajax({
                     type: 'POST',
                     url: '/add-jquery',
@@ -349,31 +285,35 @@
                             // chạy hàm load
                             let r =
                                 `<tr id="trow_${result.id}">
-                                                <td class="stt">${lastRow}</td>
-                                                <td>${result.title}</td>
-                                                <td>${result.position}</td>
-                                                <td>
-                                                    <div class="dropdown">
-                                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu">
-                                                                    <a class="dropdown-item" asp-controller="category" asp-action="edit" asp-route-Id="${result.id}">
-                                                                <i class="bx bx-edit-alt me-1"></i>
-                                                                Sửa
-                                                            </a>
-                                                                    <a class="dropdown-item" asp-controller="category" asp-action="delete" asp-route-Id="${result.id}">
-                                                                <i class="bx bx-trash me-1"></i>
-                                                                Xóa
-                                                            </a>
-                                                                <a data-id="${result.id}" class="dropdown-item" onclick="deleted('${result.id}')">
-                                                                <i class="bx bx-trash me-1"></i>
-                                                                Xóa Jquery
-                                                            </a>
-                                                        </div>
+                                            <td class="stt">${lastRow}</td>
+                                            <td>${result.title}</td>
+                                            <td>${result.position}</td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="/Admin/category/edit/${result.id}">
+                                                            <i class="bx bx-edit-alt me-1"></i>
+                                                            Sửa MVC
+                                                        </a>
+                                                        <a class="dropdown-item" onclick = "editCategoryAjax('${result.Id}')">
+                                                             <i class="bx bx-edit-alt me-1" ></i>
+                                                             Sửa Ajax
+                                                        </a >
+                                                        <a class="dropdown-item"  href="/Admin/category/delete/${result.id}">
+                                                            <i class="bx bx-trash me-1"></i>
+                                                            Xóa
+                                                        </a>
+                                                        <a data-id="${result.id}" class="dropdown-item" onclick="deleteCategory('${result.id}')">
+                                                            <i class="bx bx-trash me-1"></i>
+                                                            Xóa Ajax
+                                                        </a>
                                                     </div>
-                                                </td>
-                                            </tr>`;
+                                                </div>
+                                            </td>
+                                        </tr>`;
                             $("#list-category").append(r);
                         }
                     },
@@ -381,6 +321,7 @@
                 });
             }
             else {
+
                 $.ajax({
                     type: 'POST',
                     url: '/editcategoryajax',
@@ -395,12 +336,18 @@
                     },
                     success: function (result) {
                         $("#category-info").modal('hide');
-                        LoadData();
+                        //LoadData();
+                        //alert($("#trow_" + id + "> td:nth-child(2)").text());
+
+                        $("#trow_" + result.id + ">td:nth-child(2)").text(result.title);
+                        $("#trow_" + result.id + ">td:nth-child(3)").text(result.position);
+                        //$("#trow_${"result.id"} .dropdown-menu .dropdown-item:n-child(1)").attr("href", "/Admin/category/edit/${result.id}");
+                        //$("#trow_${"result.id"} .dropdown-menu .dropdown-item:n-child(2)").attr("href", "/Admin/category/edit/${result.id}");
+                        $("#idCategory").val("");
                     },
                     error: function (erro) { },
                 })
             }
-
         });
 
         // Hàm xóa danh mục
@@ -446,17 +393,21 @@
                                                         <i class="bx bx-dots-vertical-rounded"></i>
                                                     </button>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" asp-controller="category" asp-action="edit" asp-route-Id="${item.id}">
+                                                        <a class="dropdown-item" href="/Admin/category/edit/${item.id}">
                                                             <i class="bx bx-edit-alt me-1"></i>
-                                                            Sửa
+                                                            Sửa MVC
                                                         </a>
-                                                        <a class="dropdown-item" asp-controller="category" asp-action="delete" asp-route-Id="${item.id}">
+                                                        <a class="dropdown-item" onclick = "editCategoryAjax('${item.id}')" >
+                                                            <i class="bx bx-edit-alt me-1" ></i>
+                                                            Sửa Ajax
+                                                        </a >
+                                                        <a class="dropdown-item" href="/Admin/category/delete/${item.id}">
                                                             <i class="bx bx-trash me-1"></i>
-                                                            Xóa
+                                                            Xóa MVC
                                                         </a>
-                                                        <a data-id="${item.id}" class="dropdown-item" onclick="deleted('${item.id}')">
+                                                        <a data-id="${item.id}" class="dropdown-item" onclick="deleteCategory('${item.id}')">
                                                             <i class="bx bx-trash me-1"></i>
-                                                            Xóa Jquery
+                                                            Xóa Ajax
                                                         </a>
                                                     </div>
                                                 </div>
@@ -483,11 +434,21 @@
                 url: '/editcategoryajax',
                 data: { id: id },
                 success: function (result) {
-                    alert(result.title);
                     RenderModalUpdate(result);
                 },
             });
 
+        }
+
+        function RenderModalUpdate(result) {
+            $("#idCategory").val(result.id);
+            $("#Title").val(result.title);
+            $("#Description").val(result.description);
+            $("#Position").val(result.position);
+            $("#SeoTitle").val(result.seoTitle);
+            $("#SeoDescription").val(result.seoDescription);
+            $("#SeoKeyWords").val(result.seoKeyWords);
+            $("#category-info").modal('show');
         }
 
         // Hàm xử lý sự kiện hide modal
@@ -506,18 +467,12 @@
             $("#SeoKeyWords").val("");
         }
 
-        function RenderModalUpdate(result) {
-            $("#idCategory").val(result.id);
-            $("#Title").val(result.title);
-            $("#Description").val(result.description);
-            $("#Position").val(result.position);
-            $("#SeoTitle").val(result.seoTitle);
-            $("#SeoDescription").val(result.seoDescription);
-            $("#SeoKeyWords").val(result.seoKeyWords);
-            $("#category-info").modal('show');
-        }
+        // var controllerName = '@ViewBag.ControllerName';
+        // $(".menu-item").each(() => {
+        //     $(this).removeClass("active");
+        // });
+        // $("#" + controllerName).addClass("active");
 
 
     </script>
 }
- *@

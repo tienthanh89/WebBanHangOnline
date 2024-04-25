@@ -1,7 +1,11 @@
-﻿@model IEnumerable<WebBanHangOnline.Models.ViewModels.TbCategoryTbNewsVM>
+﻿@model X.PagedList.IPagedList<WebBanHangOnline.Models.TbProduct>
+@using X.PagedList.Mvc.Core;
 @{
-    ViewData["Title"] = "Danh sách tin tức";
+    ViewData["Title"] = "Danh sách sản phẩm";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@{
+    var controller = "product";
 }
 
 <!--Aside Body-->
@@ -24,7 +28,7 @@
         </li>
 
         <!-- Tin tức -->
-        <li class="menu-item active">
+        <li class="menu-item ">
             <a href="/admin/news" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Analytics">Tin tức</div>
@@ -40,11 +44,12 @@
         </li>
 
         <!-- Quản lý sản phẩm -->
-        <li class="menu-item ">
+        <li class="menu-item active">
             <a href="/admin/product" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Analytics">Quản lý sản phẩm</div>
             </a>
+
         </li>
 
         <!-- Danh mục sản phẩm -->
@@ -74,16 +79,19 @@
 
 @section search {
     <!-- Search -->
-    <div class="navbar-nav align-items-center">
-        <div class="nav-item d-flex align-items-center">
-            <button type="submit" class="btn btn-light btn-sm">
-                <i class="bx bx-search fs-4 lh-0"></i>
-            </button>
-            <input type="text"
-                   class="form-control border-0 shadow-none"
-                   placeholder="Search..."
-                   aria-label="Search..." />
-        </div>
+    <div class="navbar-nav align-items-center" style="width:100%">
+        <form asp-controller=@controller asp-action="index" method="get" style="width:100%">
+            <div class="nav-item d-flex align-items-center" style="width:100%">
+                <button type="submit" class="btn btn-light btn-sm">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                </button>
+                <input type="text"
+                       class="form-control border-1 mx-3 shadow-none flex-grow-1"
+                       placeholder="Search..."
+                       aria-label="Search..."
+                       name="searchStr" />
+            </div>
+        </form>
     </div>
     <!-- /Search -->
 }
@@ -95,23 +103,25 @@
             <h2 class="card-title"><strong>@ViewData["Title"]</strong></h2>
 
             <div class="card-tools ">
-                <a href="/admin/news/add_mvc" class="btn btn-primary">Thêm mới MVC</a>
+                <a href="/admin/@controller/add_mvc" class="btn btn-primary">Thêm mới MVC</a>
                 <a href="#" class="btn btn-primary shadow rounded" data-bs-toggle="modal" data-bs-target="#category-info">Thêm mới Ajax</a>
                 <a class="btn btn-danger" id="btnDeleteAll" onclick="deleteChecked()">Xóa</a>
             </div>
         </div>
-        <div class="table-responsive text-nowrap flex-grow-1" >
+        <div class="table-responsive text-nowrap flex-grow-1">
             <table class="table ">
                 <thead>
                     <tr>
                         <th>
-                            <input type="checkbox" class="form-switch-md" id="select-all" onchange="selectAll()"  style="transform: scale(1.5)" />
+                            <input type="checkbox" class="form-switch-md" id="select-all" onchange="selectAll()" style="transform: scale(1.5)" />
                         <th>STT</th>
                         <th>Hình ảnh</th>
-                        <th>Tiêu đề</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Số lượng</th>
+                        <th>Gía</th>
                         <th>Ngày tạo</th>
                         <th>Hiển thị</th>
-                        <th>Danh mục</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -121,35 +131,34 @@
                         var i = 1;
                         foreach (var item in @Model)
                         {
-                            <tr id="trow_@item.News.Id">
+                            <tr id="trow_@item.Id">
                                 <td>
-                                    <input type="checkbox" class="check-all" style="transform: scale(1.5)" value="@item.News.Id" id="check_@item.News.Id"/>
+                                    <input type="checkbox" class="check-all" style="transform: scale(1.5)" value="@item.Id" id="check_@item.Id" />
                                 </td>
                                 <td class="stt">@i</td>
-                                <td><img src="@item.News.ImageUrl" style="width:50px" /></td>
-                                <td>@item.News.Title</td>
-                                <td>@item.News.CreatedDate.ToString()</td>
+                                <td><img src="@item.ImageUrl" style="width:50px" /></td>
+                                <td>@item.Title</td>
+                                <td>
+                                    @if(item.tbProductCategory!=null){
+                                        @item.tbProductCategory.Title
+                                    }
+                                </td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price</td>
+                                <td>@item.CreatedDate.ToString()</td>
                                 <td class="">
-                                    @if (item.News.IsActive)
+                                    @if (item.IsActive)
                                     {
-                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.News.Id))">
-                                            <i id="isActive_@item.News.Id" class='bx bx-check-circle text-success' style="transform: scale(1.5)"></i>
+                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.Id))">
+                                            <i id="isActive_@item.Id" class='bx bx-check-circle text-success' style="transform: scale(1.5)"></i>
                                         </a>
                                     }
                                     else
                                     {
-                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.News.Id))">
-                                            <i id="isActive_@item.News.Id" class='bx bx-x-circle text-danger' style="transform: scale(1.5)"></i>
+                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.Id))">
+                                            <i id="isActive_@item.Id" class='bx bx-x-circle text-danger' style="transform: scale(1.5)"></i>
                                         </a>
                                     }
-                                </td>
-                                <td>
-                                    @{
-                                        if (@item.Category!= null)
-                                        {
-                                                                                                    <span>@item.Category.Title</span>
-                                        }
-                                     }
                                 </td>
                                 <td>
                                     <div class="dropdown">
@@ -157,10 +166,10 @@
                                             <i class="bx bx-dots-vertical-rounded"></i>
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" asp-controller="news" asp-action="edit_mvc" asp-route-Id="@item.News.Id"><i class="bx bx-edit-alt me-1"></i>Sửa MVC</a>
-                                            <a class="dropdown-item" onclick="editCategoryAjax('@item.News.Id')"><i class="bx bx-edit-alt me-1"></i>Sửa Ajax</a>
-                                            <a class="dropdown-item" asp-controller="news" asp-action="delete" asp-route-Id="@item.News.Id"><i class="bx bx-trash me-1"></i> Xóa MVC</a>
-                                            <a data-id="@item.News.Id" class="dropdown-item" onclick="deleteCategory('@(item.News.Id)')"><i class="bx bx-trash me-1"></i> Xóa Ajax</a>
+                                            <a class="dropdown-item" asp-controller="product" asp-action="edit_mvc" asp-route-Id="@item.Id"><i class="bx bx-edit-alt me-1"></i>Sửa MVC</a>
+                                            <a class="dropdown-item" onclick="editCategoryAjax('@item.Id')"><i class="bx bx-edit-alt me-1"></i>Sửa Ajax</a>
+                                            <a class="dropdown-item" asp-controller="product" asp-action="delete" asp-route-Id="@item.Id"><i class="bx bx-trash me-1"></i> Xóa MVC</a>
+                                            <a data-id="@item.Id" class="dropdown-item" onclick="deleteCategory('@(item.Id)')"><i class="bx bx-trash me-1"></i> Xóa Ajax</a>
                                         </div>
                                     </div>
                                 </td>
@@ -178,7 +187,15 @@
                 </tbody>
 
             </table>
+                        
         </div>
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
+   {
+       MaximumPageNumbersToDisplay = 2,
+       LiElementClasses = new string[] { "page-item" },
+       PageClasses = new string[] { "page-link" },
+
+   })
     </div>
 
 </section>
@@ -228,13 +245,13 @@
                     <a id="add-category" href="javascript:void(0)" class="btn btn-primary">Ok</a>
                 </div>
             </form>
-            
+
         </div>
     </div>
 </div>
 
 
-@section scripts{
+@section scripts {
     <script>
         $(document).ready(() => {
 
@@ -270,30 +287,29 @@
 
         function changeStatus(id) {
             $.ajax({
-                type:'post',
-                url:'/Admin/News/changeStatus',
+                type: 'post',
+                url: '/Admin/News/changeStatus',
                 data: {
-                    Id:id
+                    Id: id
                 },
-                success: function (result) {                    
-                    if (result.isActive == true){
+                success: function (result) {
+                    if (result.isActive == true) {
                         $("#isActive_" + result.id).removeClass("text-danger");
                         $("#isActive_" + result.id).removeClass("bx-x-circle");
                         $("#isActive_" + result.id).addClass("bx-check-circle");
                         $("#isActive_" + result.id).addClass("text-success");
                     }
-                    else if (result.isActive == false)  
-                    {
+                    else if (result.isActive == false) {
                         $("#isActive_" + result.id).removeClass("text-success");
                         $("#isActive_" + result.id).removeClass("bx-check-circle");
                         $("#isActive_" + result.id).addClass("text-danger");
                         $("#isActive_" + result.id).addClass("bx-x-circle");
-                    }                    
+                    }
                 }
-            })            
+            })
         }
 
-        function selectAll() {
+        function selectAll() { 
             var isCheck = $("#select-all").is(":checked");
             if (isCheck) {
                 $(".check-all").prop("checked", true);
@@ -318,7 +334,7 @@
 
         });
 
-        
+
 
 
         // Hàm thêm danh mục khi ấn nút "Thêm danh mục jquery"

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanHangOnline.Models;
 
@@ -11,9 +12,11 @@ using WebBanHangOnline.Models;
 namespace WebBanHangOnline.Migrations
 {
     [DbContext(typeof(WebBanHangDemoContext))]
-    partial class WebBanHangDemoContextModelSnapshot : ModelSnapshot
+    [Migration("20240424100238_updateDB")]
+    partial class updateDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -512,9 +515,6 @@ namespace WebBanHangOnline.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Alias")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
@@ -539,18 +539,6 @@ namespace WebBanHangOnline.Migrations
 
                     b.Property<DateTime?>("ModifierDate")
                         .HasColumnType("datetime");
-
-                    b.Property<string>("SeoDescription")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("SeoKeyWords")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("SeoTitle")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("Title")
                         .HasMaxLength(150)

@@ -77,7 +77,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
 
         public IActionResult Add_MVC()
         {
-            TbPostVM tbPostVM = new TbPostVM()
+            TbPostVM tbPostVM  = new TbPostVM()
             {
                 TbPost = new TbPost(),
                 CategoryList = _db.TbCategories.Select(u => new SelectListItem { Text = u.Title, Value = u.Id.ToString() })
@@ -86,7 +86,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add_MVC(TbPostVM tbPostVM, IFormFile? file, int? id)
+        public IActionResult Add_MVC(TbPostVM? tbPostVM, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
@@ -98,7 +98,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
                 if (file != null)
                 {
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string filePath = Path.Combine(wwwRootPath, @"images\admin\news");
+                    string filePath = Path.Combine(wwwRootPath, @"images\admin\post");
                     // Tạo FileStream mới tới vị trí muốn luu file
                     // Copy file tải lên vào
                     using (var fileStream = new FileStream(Path.Combine(filePath, fileName), FileMode.Create))
@@ -106,7 +106,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
                         file.CopyTo(fileStream);
                     }
 
-                    tbPostVM.TbPost.ImageUrl = @"\images\admin\news\" + fileName;
+                    tbPostVM.TbPost.ImageUrl = @"\images\admin\post\" + fileName;
                 }
                 tbPostVM.TbPost.CreatedDate = DateTime.Now;
                 tbPostVM.TbPost.ModifierDate = DateTime.Now;
@@ -115,7 +115,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
                     tbPostVM.TbPost.Alias = WebBanHangOnline.Models.Common.Filter.FilterChar(tbPostVM.TbPost.Title);
                 }
 
-                //tbPost.tbCategory = _db.TbPost.Include(n =>n.tbCategory).FirstOrDefault(n=>n.Id == id);
+                //tbPost.tbCategory = TbProductVM.TbPost.Include(n =>n.tbCategory).FirstOrDefault(n=>n.Id == id);
 
                 _db.TbPosts.Add(tbPostVM.TbPost);
                 _db.SaveChanges();

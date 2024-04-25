@@ -8,7 +8,6 @@ namespace WebBanHangOnline.Models.ViewModels
     {
         public DbSet<TbNews>? dbSetTbNews { get; set; }
         [ValidateNever]
-        public IEnumerable<SelectListItem>? CategoryList { get; set; }
-
+        public IEnumerable<string>? CategoryList { get; set; }
     }
 }

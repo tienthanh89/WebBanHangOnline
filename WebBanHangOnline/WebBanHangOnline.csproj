@@ -41,6 +41,8 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="wwwroot\Images\admin\post\" />
+    <Folder Include="wwwroot\Images\admin\product\" />
     <Folder Include="wwwroot\Images\admin\news\" />
   </ItemGroup>
 

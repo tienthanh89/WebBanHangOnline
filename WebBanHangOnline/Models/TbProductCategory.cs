@@ -32,4 +32,16 @@ public partial class TbProductCategory
 
     [StringLength(150)]
     public string? ModifierBy { get; set; }
+    [StringLength(250)]
+    public string? SeoTitle { get; set; }
+
+    [StringLength(500)]
+    public string? SeoDescription { get; set; }
+
+    [StringLength(250)]
+    public string? SeoKeyWords { get; set; }
+
+    public bool IsActive { get; set; }
+
+    public string? Alias {  get; set; }
 }

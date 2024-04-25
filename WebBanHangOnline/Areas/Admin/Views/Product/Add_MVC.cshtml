@@ -1,0 +1,285 @@
+﻿@model WebBanHangOnline.Models.ViewModels.TbProductVM
+@{
+    ViewData["Title"] = "Thêm sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section cdn {
+    @*     <script src="https://cdn.tiny.cloud/1/thty8oxkq898xj1iv9cifkcu4n3mqz3di55n1krs9mgiq2ss/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+ *@
+}
+
+
+@section asideBody {
+    <ul class="menu-inner py-1">
+        <!-- Dashboard -->
+        <li class="menu-item">
+            <a href="/admin" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+
+        <!-- Danh mục -->
+        <li class="menu-item ">
+            <a href="/admin/category" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Danh mục</div>
+            </a>
+        </li>
+
+        <!-- Tin tức -->
+        <li class="menu-item ">
+            <a href="/admin/news" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Tin tức</div>
+            </a>
+        </li>
+
+        <!-- Bài viết -->
+        <li class="menu-item ">
+            <a href="/Admin/post" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Bài viết</div>
+            </a>
+        </li>
+
+        <!-- Quản lý sản phẩm -->
+        <li class="menu-item active">
+            <a href="/admin/product" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Quản lý sản phẩm</div>
+            </a>
+        </li>
+
+        <!-- Danh mục sản phẩm -->
+        <li class="menu-item ">
+            <a href="/admin/productcategory" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Danh mục sản phẩm</div>
+            </a>
+        </li>
+
+        <!-- Cấu hình hệ thống -->
+        <li class="menu-item ">
+            <a href="index.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+
+        <li class="menu-item">
+            <a href="/news" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-table"></i>
+                <div data-i18n="Tables">Tables</div>
+            </a>
+        </li>
+    </ul>
+}
+
+
+
+
+<!-- Main content -->
+
+<div class="nav-align-top flex-grow-1">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <button type="button"
+                    class="nav-link active"
+                    role="tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#navs-top-home"
+                    aria-controls="navs-top-home"
+                    aria-selected="true">
+                Thông tin sản phẩm
+            </button>
+        </li>
+        <li class="nav-item">
+            <button type="button"
+                    class="nav-link"
+                    role="tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#navs-top-profile"
+                    aria-controls="navs-top-profile"
+                    aria-selected="false">
+                Ảnh đại diện
+            </button>
+        </li>
+        <li class="nav-item">
+            <button type="button"
+                    class="nav-link"
+                    role="tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#navs-top-messages"
+                    aria-controls="navs-top-messages"
+                    aria-selected="false">
+                SEO
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="navs-top-home" role="tabpanel">
+            <section class="content">
+                <div class="bs-stepper-content">
+                    <!--gửi form tới action Add trong Category và thực thi action đó-->
+                    <!--asp-area="admin" asp-action="Add" asp-controller="Category"-->
+                    <!--Form muốn tải ảnh lên controller phải có attribute enctype="multipart/form-data"-->
+                    <form method="post" enctype="multipart/form-data">
+                        <!-- your steps content here -->
+                        <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+                            <div class="form-group mb-3">
+                                <label asp-for="@Model.tbProduct.Title" class="ms-2">Tên sản phẩm</label>
+                                <input asp-for="@Model.tbProduct.Title" class="form-control " placeholder="Tên sản phẩm" autofocus>
+                                <span asp-validation-for="@Model.tbProduct.Title" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label asp-for="@Model.tbProduct.ProductCode">Mã sản phẩm</label>
+                                <input asp-for="@Model.tbProduct.ProductCode" class="form-control" placeholder="">
+                                <span asp-validation-for="@Model.tbProduct.ProductCode" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="@Model.tbProduct.Description">Mô tả</label>
+                                <input asp-for="@Model.tbProduct.Description" class="form-control" placeholder="">
+                                <span asp-validation-for="@Model.tbProduct.Description" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="@Model.tbProduct.Detail">Chi tiết</label>
+                                <textarea id="textarea" asp-for="@Model.tbProduct.Detail" class="form-control" placeholder=""></textarea>
+                                <span asp-validation-for="@Model.tbProduct.Detail" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3 d-flex gap-5">
+                                <div class="d-flex">
+                                    <input type="checkbox" asp-for="@Model.tbProduct.IsActive" class="" style="transform:scale(1.3)" placeholder="" checked>
+                                    <label asp-for="@Model.tbProduct.IsActive" class="mx-3">Hiển thị</label>
+                                </div>
+
+                                <div class="d-flex">
+                                    <input type="checkbox" asp-for="@Model.tbProduct.IsHot" class=" " style="transform:scale(1.3)" placeholder="">
+                                    <label asp-for="@Model.tbProduct.IsHot" class="mx-3">Hot </label>
+                                </div>
+
+                                <div class="d-flex">
+                                    <input type="checkbox" asp-for="@Model.tbProduct.IsFeature" class=" " style="transform:scale(1.3)" placeholder="">
+                                    <label asp-for="@Model.tbProduct.IsFeature" class="mx-3">Nổi bật</label>
+                                </div>
+
+                                <div class="d-flex">
+                                    <input type="checkbox" asp-for="@Model.tbProduct.IsSale" class=" " style="transform:scale(1.3)" placeholder="">
+                                    <label asp-for="@Model.tbProduct.IsSale" class="mx-3">Khuyến mãi</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label>Danh mục sản phẩm</label>
+                                <select asp-for="@Model.tbProduct.ProductCategoryId" asp-items="@Model.CategoryList" class="form-select">
+                                    <option disabled selected>--Selecte Category--</option>
+                                </select>
+                                <span asp-validation-for="@Model.tbProduct.Id" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="form-group mb-3 d-flex gap-5">
+                                <div class="form-group mb-3">
+                                    <label asp-for="@Model.tbProduct.Price">Giá</label>
+                                    <input asp-for="@Model.tbProduct.Price" class="form-control" placeholder="Giá">
+                                    <span asp-validation-for="@Model.tbProduct.Price" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label asp-for="@Model.tbProduct.PriceSale">Giá khuyến mãi</label>
+                                    <input asp-for="@Model.tbProduct.PriceSale" class="form-control" placeholder="Giá khuyến mãi">
+                                    <span asp-validation-for="@Model.tbProduct.PriceSale" class="text-danger"></span>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label asp-for="@Model.tbProduct.Quantity">Số lượng</label>
+                                    <input asp-for="@Model.tbProduct.Quantity" class="form-control" placeholder="Số lượng">
+                                    <span asp-validation-for="@Model.tbProduct.Quantity" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="form-group">
+                            <a class="btn btn-primary" href="/admin/product">Quay lại</a>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- /.card-body -->
+                <!-- /.card-footer-->
+                <!-- /.card -->
+
+            </section>
+            <!-- /.content -->
+        </div>
+        <div class="tab-pane fade" id="navs-top-profile" role="tabpanel">
+            <div class="form-group mb-3 ">
+                <label asp-for="@Model.tbProduct.ImageUrl">Ảnh sản phẩm</label>
+                <input type="file" name="file" id="fileInput" class="form-control"></>
+            </div>
+            <div class="form-group mb-3">
+                <div id="imagePreview" ></div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="navs-top-messages" role="tabpanel">
+            <div class="form-group mb-3">
+                <label asp-for="@Model.tbProduct.SeoTitle">SeoTitle</label>
+                <input asp-for="@Model.tbProduct.SeoTitle" class="form-control" placeholder="SeoTitle">
+                <span asp-validation-for="@Model.tbProduct.SeoTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="@Model.tbProduct.SeoDescription">SeoDescription</label>
+                <input asp-for="@Model.tbProduct.SeoDescription" class="form-control" placeholder="SeoDescription">
+                <span asp-validation-for="@Model.tbProduct.SeoDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="@Model.tbProduct.SeoKeyWords">SeoKeyWords</label>
+                <input asp-for="@Model.tbProduct.SeoKeyWords" class="form-control" placeholder="SeoKeyWords">
+                <span asp-validation-for="@Model.tbProduct.SeoKeyWords" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section scripts {
+    <script>
+        $(document).ready(() => {
+            tinymce.init({
+                selector: '#textarea',
+                height: 200,
+                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+            });
+        })
+
+
+        document.getElementById('fileInput').addEventListener('change', function () {
+            $("#imagePreview").empty();
+            var file = this.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var imgElement = document.createElement('img');
+                imgElement.src = e.target.result;                
+                document.getElementById('imagePreview').appendChild(imgElement);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    </script>
+
+    @{
+        // Xác thực tự động ở phía máy khách
+                <partial name="_ValidationScriptsPartial" />
+    }
+
+
+}
