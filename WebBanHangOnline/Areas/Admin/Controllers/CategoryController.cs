@@ -29,14 +29,12 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
             return View(item);
         }
 
-        [Area("Admin")]
         [Route("category-add")]
         public IActionResult Add()
         {
             return View();
         }
 
-        [Area("Admin")]
         [Route("category-add")]
         [HttpPost]
         public IActionResult Add(TbCategory tbCategory)
@@ -54,21 +52,23 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
             return View();
         }
 
-        [Area("Admin")]
         [Route("add-jquery")]
         [HttpPost]
         public async Task<IActionResult> Add_Jquery(TbCategory tbCategory)
         {
-            tbCategory.CreatedDate = DateTime.Now;
-            tbCategory.ModifierDate = DateTime.Now;
-            tbCategory.Alias = WebBanHangOnline.Models.Common.Filter.FilterChar(tbCategory.Title);
-            _db.TbCategories.Add(tbCategory);
-            _db.SaveChanges();
+            if (ModelState.IsValid)
+            {
+                tbCategory.CreatedDate = DateTime.Now;
+                tbCategory.ModifierDate = DateTime.Now;
+                tbCategory.Alias = WebBanHangOnline.Models.Common.Filter.FilterChar(tbCategory.Title);
+                _db.TbCategories.Add(tbCategory);
+                _db.SaveChanges();
+            }
+            
 
             return Ok(tbCategory);
         }
 
-        [Area("Admin")]
         [Route("loaddata")]
         [HttpPost]
         public async Task<IActionResult> LoadData()

@@ -52,7 +52,7 @@
     <script src="https://cdn.tiny.cloud/1/thty8oxkq898xj1iv9cifkcu4n3mqz3di55n1krs9mgiq2ss/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 
     <style>
-        .menu-link:hover{
+        .menu-link:hover {
             background-color: rgba(105, 108, 255, 0.16) !important;
         }
 
@@ -122,7 +122,85 @@
 
                 <div class="menu-inner-shadow"></div>
 
-                @RenderSection("asideBody", required: false)
+                <!--Aside Body-->
+                @{
+                    var currentPage = this.Context.Request.Path;
+                }
+                <ul class="menu-inner py-1">
+                    <!-- Dashboard -->
+                    <li class="menu-item @(currentPage == "/admin"? " active": "")">
+                        <a href="/admin" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div data-i18n="Analytics">Dashboard</div>
+                        </a>
+                    </li>
+
+                    <!-- Danh mục -->
+                    <li class="menu-item @(currentPage == "/admin/category" ||
+                                           currentPage == "/category-add" ||
+                                           currentPage.ToString().Substring(0,currentPage.ToString().LastIndexOf('/')) == "/Admin/category/edit" ? " active": "")">
+                        <a href="/admin/category" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div data-i18n="Analytics">Danh mục</div>
+                        </a>
+                    </li>
+
+                    <!-- Tin tức -->
+                    <li class="menu-item @(currentPage == "/admin/news" ||
+                                           currentPage == "/admin/news/add_mvc" ||
+                                           currentPage.ToString().Substring(0,currentPage.ToString().LastIndexOf('/')) == "/Admin/news/edit_mvc" ? " active": "")">
+                        <a href="/admin/news" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div data-i18n="Analytics">Tin tức</div>
+                        </a>
+                    </li>
+
+                    <!-- Bài viết -->
+                    <li class="menu-item @(currentPage == "/admin/post" ||
+                                           currentPage == "/admin/post/add_mvc" ||
+                                           currentPage.ToString().Substring(0,currentPage.ToString().LastIndexOf('/')) == "/Admin/post/edit_mvc" ? " active": "")">
+                        <a href="/Admin/post" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div data-i18n="Analytics">Bài viết</div>
+                        </a>
+                    </li>
+
+                    <!-- Quản lý sản phẩm -->
+                    <li class="menu-item @(currentPage == "/admin/product" ||
+                                           currentPage == "/admin/product/add_mvc" ||
+                                           currentPage.ToString().Substring(0,currentPage.ToString().LastIndexOf('/')) == "/Admin/product/edit_mvc" ? " active": "")">
+                        <a href="/admin/product" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div data-i18n="Analytics">Quản lý sản phẩm</div>
+                        </a>
+                    </li>
+
+                    <!-- Danh mục sản phẩm -->
+                    <li class="menu-item @(currentPage == "/admin/productcategory" ||
+                                           currentPage == "/Admin/productcategory/add_mvc" ||
+                                           currentPage.ToString().Substring(0,currentPage.ToString().LastIndexOf('/')) == "/Admin/productcategory/edit_mvc" ? " active": "")">
+                        <a href="/admin/productcategory" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div data-i18n="Analytics">Danh mục sản phẩm</div>
+                        </a>
+                        
+                    </li>
+
+                    <!-- Cấu hình hệ thống -->
+                    <li class="menu-item ">
+                        <a href="index.html" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div data-i18n="Analytics">Dashboard</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="/news" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-table"></i>
+                            <div data-i18n="Tables">Tables</div>
+                        </a>
+                    </li>
+                </ul>
 
                 @* @await Component.InvokeAsync("CategoryWeb") *@
             </aside>
@@ -141,7 +219,7 @@
 
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                         <!-- Search -->
-                        @RenderSection("search",required: false)
+                        @RenderSection("search", required: false)
                         <!-- /Search -->
 
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -220,7 +298,7 @@
 
                 <!-- / Navbar -->
                 <!-- Content wrapper -->
-                <div class="content-wrapper" >
+                <div class="content-wrapper">
                     <!-- Content -->
                     <div class="container-xxl flex-grow-1 container-p-y">
                         @RenderBody()
@@ -228,28 +306,28 @@
                     <!-- / Content -->
                     <!-- Footer -->
                     @* <footer class="content-footer footer bg-footer-theme">
-                        <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-                            <div class="mb-2 mb-md-0">
-                                ©
-                                <script>
-                                    document.write(new Date().getFullYear());
-                                </script>
-                                , made with ❤️ by
-                                <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
-                            </div>
-                            <div>
-                                <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-                                <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
+                    <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                    <div class="mb-2 mb-md-0">
+                    ©
+                    <script>
+                    document.write(new Date().getFullYear());
+                    </script>
+                    , made with ❤️ by
+                    <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+                    </div>
+                    <div>
+                    <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
+                    <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
 
-                                <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                                   target="_blank"
-                                   class="footer-link me-4">Documentation</a>
+                    <a href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
+                    target="_blank"
+                    class="footer-link me-4">Documentation</a>
 
-                                <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                                   target="_blank"
-                                   class="footer-link me-4">Support</a>
-                            </div>
-                        </div>
+                    <a href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
+                    target="_blank"
+                    class="footer-link me-4">Support</a>
+                    </div>
+                    </div>
                     </footer> *@
                     <!-- / Footer -->
 
@@ -290,3 +368,4 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 </html>
+

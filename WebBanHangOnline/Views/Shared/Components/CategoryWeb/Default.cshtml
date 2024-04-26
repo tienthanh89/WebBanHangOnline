@@ -1,13 +1,21 @@
 ﻿@model IEnumerable<WebBanHangOnline.Models.TbCategoryWeb>
 
 <ul class="menu-inner py-1">
-
+    @{
+        var currentPage = this.Context.Request.Path;
+    }
+    <li class="menu-item @(currentPage == "/admin"? " active": "")">
+        <a href="/admin" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+            Dashboard
+        </a>
+    </li>
     @foreach (var item in Model)
     {
-        <li class="menu-item" id="@item.Name" data-name="@item.Name">
+        <li class="menu-item @(currentPage == ("/admin/" + item.Name) ? " active": "")" >
             <a href="/admin/@item.Name" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">@item.Name</div>
+                <label asp-for="@item.Name">@item.Name</label>
             </a>
         </li>
     }
