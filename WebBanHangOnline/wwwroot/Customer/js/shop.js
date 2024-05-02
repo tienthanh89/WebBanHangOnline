@@ -18,7 +18,7 @@ function loadData() {
             if (result.length > 0) {
                 result.forEach((item) => {
                     $("#product_list").append(`
-                        <div class="col-md-4 col-lg-4 col-xl-3">
+                        <div class="col-md-6 col-lg-6 col-xl-4">
                             <div class="rounded position-relative fruite-item">
                                 <a href="javascript:void(0)" onclick="shopDetail(${item.id})" class="fruite-img">
                                     <img src=${item.imageUrl} class="img-fluid w-100 rounded-top" alt="">
@@ -63,7 +63,7 @@ function loadProductCategory(id, stt) {
             if (result.length > 0) {
                 result.forEach((item) => {
                     $("#product_list").append(`
-                        <div class="col-md-4 col-lg-4 col-xl-3">
+                        <div class="col-md-6 col-lg-6 col-xl-4">
                             <div class="rounded position-relative fruite-item">
                                 <a href="javascript:void(0)" onclick="shopDetail(${item.id})" class="fruite-img">
                                     <img src=${item.imageUrl} class="img-fluid w-100 rounded-top" alt="">
