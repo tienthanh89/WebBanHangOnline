@@ -47,13 +47,13 @@
         </li>
     </ul>
     <div class="tab-content">
-        <div class="tab-pane fade show active" id="navs-top-home" role="tabpanel">
-            <section class="content">
-                <div class="bs-stepper-content">
-                    <!--gửi form tới action Add trong Category và thực thi action đó-->
-                    <!--asp-area="admin" asp-action="Add" asp-controller="Category"-->
-                    <!--Form muốn tải ảnh lên controller phải có attribute enctype="multipart/form-data"-->
-                    <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data">
+            <div class="tab-pane fade show active" id="navs-top-home" role="tabpanel">
+                <section class="content">
+                    <div class="bs-stepper-content">
+                        <!--gửi form tới action Add trong Category và thực thi action đó-->
+                        <!--asp-area="admin" asp-action="Add" asp-controller="Category"-->
+                        <!--Form muốn tải ảnh lên controller phải có attribute enctype="multipart/form-data"-->
                         <!-- your steps content here -->
                         <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
                             <div class="form-group mb-3">
@@ -61,7 +61,7 @@
                                 <input asp-for="@Model.tbProduct.Title" class="form-control " placeholder="Tên sản phẩm" autofocus>
                                 <span asp-validation-for="@Model.tbProduct.Title" class="text-danger"></span>
                             </div>
-                            
+
                             <div class="form-group mb-3">
                                 <label asp-for="@Model.tbProduct.ProductCode">Mã sản phẩm</label>
                                 <input asp-for="@Model.tbProduct.ProductCode" class="form-control" placeholder="">
@@ -109,7 +109,7 @@
                                 </select>
                                 <span asp-validation-for="@Model.tbProduct.Id" class="text-danger"></span>
                             </div>
-                            
+
                             <div class="form-group mb-3 d-flex gap-5">
                                 <div class="form-group mb-3">
                                     <label asp-for="@Model.tbProduct.Price">Giá</label>
@@ -127,48 +127,49 @@
                                     <span asp-validation-for="@Model.tbProduct.Quantity" class="text-danger"></span>
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="form-group">
                             <a class="btn btn-primary" href="/admin/product">Quay lại</a>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
-                    </form>
+                    </div>
+
+                    <!-- /.card-body -->
+                    <!-- /.card-footer-->
+                    <!-- /.card -->
+
+                </section>
+                <!-- /.content -->
+            </div>
+            <div class="tab-pane fade" id="navs-top-profile" role="tabpanel">
+                <div class="form-group mb-3 ">
+                    <label asp-for="@Model.tbProduct.ImageUrl">Ảnh sản phẩm</label>
+                    <input type="file" name="file" id="fileInput" class="form-control"></>
                 </div>
+                <div class="form-group mb-3">
+                    <div id="imagePreview"></div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="navs-top-messages" role="tabpanel">
+                <div class="form-group mb-3">
+                    <label asp-for="@Model.tbProduct.SeoTitle">SeoTitle</label>
+                    <input asp-for="@Model.tbProduct.SeoTitle" class="form-control" placeholder="SeoTitle">
+                    <span asp-validation-for="@Model.tbProduct.SeoTitle" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="@Model.tbProduct.SeoDescription">SeoDescription</label>
+                    <input asp-for="@Model.tbProduct.SeoDescription" class="form-control" placeholder="SeoDescription">
+                    <span asp-validation-for="@Model.tbProduct.SeoDescription" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-4">
+                    <label asp-for="@Model.tbProduct.SeoKeyWords">SeoKeyWords</label>
+                    <input asp-for="@Model.tbProduct.SeoKeyWords" class="form-control" placeholder="SeoKeyWords">
+                    <span asp-validation-for="@Model.tbProduct.SeoKeyWords" class="text-danger"></span>
+                </div>
+            </div>
+        </form>
 
-                <!-- /.card-body -->
-                <!-- /.card-footer-->
-                <!-- /.card -->
-
-            </section>
-            <!-- /.content -->
-        </div>
-        <div class="tab-pane fade" id="navs-top-profile" role="tabpanel">
-            <div class="form-group mb-3 ">
-                <label asp-for="@Model.tbProduct.ImageUrl">Ảnh sản phẩm</label>
-                <input type="file" name="file" id="fileInput" class="form-control"></>
-            </div>
-            <div class="form-group mb-3">
-                <div id="imagePreview" ></div>
-            </div>
-        </div>
-        <div class="tab-pane fade" id="navs-top-messages" role="tabpanel">
-            <div class="form-group mb-3">
-                <label asp-for="@Model.tbProduct.SeoTitle">SeoTitle</label>
-                <input asp-for="@Model.tbProduct.SeoTitle" class="form-control" placeholder="SeoTitle">
-                <span asp-validation-for="@Model.tbProduct.SeoTitle" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="@Model.tbProduct.SeoDescription">SeoDescription</label>
-                <input asp-for="@Model.tbProduct.SeoDescription" class="form-control" placeholder="SeoDescription">
-                <span asp-validation-for="@Model.tbProduct.SeoDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-4">
-                <label asp-for="@Model.tbProduct.SeoKeyWords">SeoKeyWords</label>
-                <input asp-for="@Model.tbProduct.SeoKeyWords" class="form-control" placeholder="SeoKeyWords">
-                <span asp-validation-for="@Model.tbProduct.SeoKeyWords" class="text-danger"></span>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -196,7 +197,7 @@
 
             reader.onload = function (e) {
                 var imgElement = document.createElement('img');
-                imgElement.src = e.target.result;                
+                imgElement.src = e.target.result;
                 document.getElementById('imagePreview').appendChild(imgElement);
             };
 
@@ -206,7 +207,7 @@
 
     @{
         // Xác thực tự động ở phía máy khách
-                <partial name="_ValidationScriptsPartial" />
+        <partial name="_ValidationScriptsPartial" />
     }
 
 

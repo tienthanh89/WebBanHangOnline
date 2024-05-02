@@ -7,10 +7,12 @@ namespace WebBanHangOnline.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        public readonly WebBanHangDemoContext _db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, WebBanHangDemoContext db)
         {
             _logger = logger;
+            _db = db;   
         }
 
         public IActionResult Index()

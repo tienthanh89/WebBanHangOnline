@@ -22,10 +22,6 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         {
             var item = _db.TbCategories;
 
-            var controllerName = this.ControllerContext.RouteData.Values["controller"].ToString();
-            ViewBag.ControllerName = controllerName;
-
-
             return View(item);
         }
 
@@ -54,17 +50,14 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
 
         [Route("add-jquery")]
         [HttpPost]
-        public async Task<IActionResult> Add_Jquery(TbCategory tbCategory)
+        public IActionResult Add_Jquery(TbCategory tbCategory)
         {
-            if (ModelState.IsValid)
-            {
-                tbCategory.CreatedDate = DateTime.Now;
-                tbCategory.ModifierDate = DateTime.Now;
-                tbCategory.Alias = WebBanHangOnline.Models.Common.Filter.FilterChar(tbCategory.Title);
-                _db.TbCategories.Add(tbCategory);
-                _db.SaveChanges();
-            }
-            
+            tbCategory.CreatedDate = DateTime.Now;
+            tbCategory.ModifierDate = DateTime.Now;
+            tbCategory.Alias = WebBanHangOnline.Models.Common.Filter.FilterChar(tbCategory.Title);
+
+            _db.TbCategories.Add(tbCategory);
+            _db.SaveChanges();
 
             return Ok(tbCategory);
         }
@@ -73,7 +66,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> LoadData()
         {
-            var list_Category = _db.TbCategories.ToList();
+            var list_Category = await _db.TbCategories.ToListAsync();
 
             return Ok(list_Category);
         }
@@ -163,7 +156,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         }
 
         [Area("Admin")]
-        [Route("editcategoryajax")]        
+        [Route("editcategoryajax")]
         public async Task<IActionResult> editCategory_ajax(int? id)
         {
             var item = _db.TbCategories.FirstOrDefault(x => x.Id == id);

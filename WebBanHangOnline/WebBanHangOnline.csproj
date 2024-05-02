@@ -10,15 +10,19 @@
     <Compile Remove="wwwroot\Image\**" />
     <Compile Remove="wwwroot\ThemeAdmin\**" />
     <Compile Remove="wwwroot\Theme\**" />
+    <Compile Remove="wwwroot\User\**" />
     <Content Remove="wwwroot\Image\**" />
     <Content Remove="wwwroot\ThemeAdmin\**" />
     <Content Remove="wwwroot\Theme\**" />
+    <Content Remove="wwwroot\User\**" />
     <EmbeddedResource Remove="wwwroot\Image\**" />
     <EmbeddedResource Remove="wwwroot\ThemeAdmin\**" />
     <EmbeddedResource Remove="wwwroot\Theme\**" />
+    <EmbeddedResource Remove="wwwroot\User\**" />
     <None Remove="wwwroot\Image\**" />
     <None Remove="wwwroot\ThemeAdmin\**" />
     <None Remove="wwwroot\Theme\**" />
+    <None Remove="wwwroot\User\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +46,7 @@
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="wwwroot\Admin\js\category\" />
+    <Folder Include="wwwroot\Admin\js\news\" />
     <Folder Include="wwwroot\Images\admin\post\" />
     <Folder Include="wwwroot\Images\admin\product\" />
     <Folder Include="wwwroot\Images\admin\news\" />

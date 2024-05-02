@@ -1,5 +1,4 @@
-﻿@model IEnumerable<WebBanHangOnline.Models.TbCategory>
-@{
+﻿@{
     ViewData["Title"] = "Danh mục";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
@@ -32,39 +31,7 @@
                     </tr>
                 </thead>
                 <tbody id="list-category" class="table-border-bottom-0">
-                    @if (Model != null && Model.Any())
-                    {
-                        var i = 1;
-                        foreach (var item in Model)
-                        {
-                            <tr id="trow_@item.Id">
-                                <td class="stt">@i</td>
-                                <td>@item.Title</td>
-                                <td>@item.Position</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" asp-controller="category" asp-action="edit" asp-route-Id="@item.Id"><i class="bx bx-edit-alt me-1"></i>Sửa MVC</a>
-                                            <a class="dropdown-item" onclick="editCategoryAjax('@(item.Id)')"><i class="bx bx-edit-alt me-1"></i>Sửa Ajax</a>
-                                            <a class="dropdown-item" asp-controller="category" asp-action="Delete" asp-route-Id="@item.Id"><i class="bx bx-trash me-1"></i> Xóa</a>
-                                            <a data-id="@item.Id" class="dropdown-item" onclick="deleteCategory('@(item.Id)')"><i class="bx bx-trash me-1"></i> Xóa Ajax</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            i++;
-
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td style="border:0" colspan="4">Không có danh mục</td>
-                        </tr>
-                    }
+                    
                 </tbody>
             </table>
         </div>

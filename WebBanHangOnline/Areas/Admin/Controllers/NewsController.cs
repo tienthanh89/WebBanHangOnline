@@ -20,61 +20,10 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-
-        //public IActionResult Index()
-        //{
-        //    //var items = _db.TbNews.Include(n => n.tbCategory).OrderByDescending(x => x.Id).ToList();
-        //    //return View(items);
-        //    var categories = _db.TbCategories;
-
-        //    DbSetTbNewsVM dbSetTbNewsVM = new DbSetTbNewsVM()
-        //    {
-        //        dbSetTbNews = _db.TbNews,
-                
-
-
-        //    };
-        //    var lst = _db.TbNews.Include(x => x.tbCategory).Include(x => x.tbCategory.Id);
-        //    if (dbSetTbNewsVM.dbSetTbNews != null) {
-        //        foreach(var item in dbSetTbNewsVM.dbSetTbNews)
-        //        {
-        //            dbSetTbNewsVM.CategoryList = dbSetTbNewsVM.dbSetTbNews.Select(n => item.ContainsKey(n.CategoryId) ? categories[n.CategoryId] : null)
-        //        }
-        //    }
-
-        //    return View(dbSetTbNewsVM);
-        //}
-
-        
         public IActionResult Index()
         {
-            var items = _db.TbNews.Select(n => new TbCategoryTbNewsVM
-            {
-                News = n,
-                Category = n.tbCategory,
-            }).OrderByDescending(x => x.News.Id);
-            return View(items);
+            return View();
         }
-        
-
-
-
-
-        //public IActionResult Index()
-        //{
-        //    var items = _db.TbNews.Select(n => new TbCategoryTbNewsVM
-        //    {
-        //        News = n,
-        //        CategoryList = _db.TbCategories.Select(x =>)
-        //    }).OrderByDescending(x => x.News.Id);
-        //    return View(items);
-        //}
-
-        //public IActionResult Index()
-        //{
-        //    var items = _db.TbNews.Include(n => n.tbCategory).OrderByDescending(x => x.Id).ToList();
-        //    return View(items);
-        //}
 
         public IActionResult Add_MVC()
         {
@@ -222,9 +171,10 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public  IActionResult changeStatus(int id) {
+        public IActionResult changeStatus(int id)
+        {
             var item = _db.TbNews.FirstOrDefault(x => x.Id == id);
-            if(item != null)
+            if (item != null)
             {
                 item.IsActive = !item.IsActive;
                 _db.Update(item);
@@ -232,5 +182,91 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
             }
             return Ok(item);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> loadData()
+        {
+            var items = await _db.TbNews.Include(x => x.tbCategory).ToListAsync();
+
+            return Ok(items);
+        }
+
+        public IActionResult edit_Ajax(int? id)
+        {
+            var item = new TbNewsVM()
+            {
+                TbNews = _db.TbNews.Include(x => x.tbCategory).Where(x => x.Id == id).FirstOrDefault(),
+                CategoryList = _db.TbCategories.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Title }).ToList(),
+            };
+            if (item.TbNews == null) return NotFound();
+            return Ok(item);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> open_Modal()
+        {
+            var item = new TbNewsVM()
+            {
+                CategoryList = _db.TbCategories.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Title }).ToList(),
+            };
+            return Ok(item);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> add_Ajax(TbNews news)
+        {
+
+            news.CreatedDate = DateTime.Now;
+            news.ModifierDate = DateTime.Now;
+            if (news.Title != null)
+            {
+                news.Alias = WebBanHangOnline.Models.Common.Filter.FilterChar(news.Title);
+            }
+
+            _db.TbNews.Add(news);
+            _db.SaveChanges();           
+            return Ok();
+        }
     }
 }
+
+
+//public IActionResult Index()
+//{
+//    //var items = _db.TbNews.Include(n => n.tbCategory).OrderByDescending(x => x.Id).ToList();
+//    //return View(items);
+//    var categories = _db.TbCategories;
+
+//    DbSetTbNewsVM dbSetTbNewsVM = new DbSetTbNewsVM()
+//    {
+//        dbSetTbNews = _db.TbNews,
+
+
+
+//    };
+//    var lst = _db.TbNews.Include(x => x.tbCategory).Include(x => x.tbCategory.Id);
+//    if (dbSetTbNewsVM.dbSetTbNews != null) {
+//        foreach(var item in dbSetTbNewsVM.dbSetTbNews)
+//        {
+//            dbSetTbNewsVM.CategoryList = dbSetTbNewsVM.dbSetTbNews.Select(n => item.ContainsKey(n.CategoryId) ? categories[n.CategoryId] : null)
+//        }
+//    }
+
+//    return View(dbSetTbNewsVM);
+//}
+
+//public IActionResult Index()
+//{
+//    var items = _db.TbNews.Select(n => new TbCategoryTbNewsVM
+//    {
+//        News = n,
+//        CategoryList = _db.TbCategories.Select(x =>)
+//    }).OrderByDescending(x => x.News.Id);
+//    return View(items);
+//}
+
+//public IActionResult Index()
+//{
+//    var items = _db.TbNews.Include(n => n.tbCategory).OrderByDescending(x => x.Id).ToList();
+//    return View(items);
+//}

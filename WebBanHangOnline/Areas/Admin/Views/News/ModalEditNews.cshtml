@@ -1,0 +1,68 @@
+﻿<!-- Modal Add -->
+<div class="modal fade" id="news-info" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="inforTaskLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!--Tiêu đề modal-->
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white" id="infotasklabel">Thông tin tin tức</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <!--Thân modal-->
+            <form>
+                <div class="modal-body">
+                    <input type="text" id="idNews" value="" hidden />
+                    <div class="d-flex">
+                        <div class="mb-3 d-flex align-center">
+                            <img id="avatar" width="100" class="me-3 "/>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="mb-3">
+                                <label for="Title" class="form-label fw-bold">Tiêu đề tin tức</label>
+                                <input type="text" class="form-control" id="Title" name="Title" placeholder="Tiêu đề tin tức" autofocus >
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="ImageUrl">Ảnh đại diện</label>
+                                <input type="file" id="ImageUrl" name="file" class="form-control" required></>
+                            </div>
+                        </div>                                               
+                    </div>  
+                    <div class="mb-3">
+                        <label for="Description" class="form-label fw-bold">Mô tả</label>
+                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Mô tả">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="Detail">Chi tiết</label>
+                        <textarea  id="Detail" class="form-control" name="Detail" placeholder="" required></textarea>
+                    </div>
+                    <div class="form-group mb-3 d-flex">
+                        <label >Hiển thị</label>
+                        <input id="IsActive" type="checkbox" name="IsActive" class="mx-4" style="width:6rem" placeholder="" checked>
+                    </div>                    
+                    <div class="form-group mb-3">
+                        <label for="CategoryId" class="form-label fw-bold ">Danh mục</label>
+                        <select class="form-select" id="CategoryId" name="CategoryId"></select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="SeoTitle" class="form-label fw-bold">SeoTitle</label>
+                        <input type="text" class="form-control" id="SeoTitle" name="SeoTitle" placeholder="SeoTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="SeoDescription" class="form-label fw-bold">SeoDescription</label>
+                        <input type="text" class="form-control" id="SeoDescription" name="SeoDescription" placeholder="" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="SeoKeyWords" class="form-label fw-bold">SeoKeyWords</label>
+                        <input type="text" class="form-control" id="SeoKeyWords" name="SeoKeyWords" placeholder="" required>
+                    </div>
+                </div>
+
+                <!--Cụm nút nhấn-->
+                <div class="modal-footer">
+                    <a href="javascript:void()" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</a>
+                    <a id="add-news" href="javascript:void(0)" class="btn btn-primary">Ok</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

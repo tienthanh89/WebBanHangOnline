@@ -15,7 +15,7 @@
         <li class="menu-item @(currentPage == ("/admin/" + item.Name) ? " active": "")" >
             <a href="/admin/@item.Name" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <label asp-for="@item.Name">@item.Name</label>
+                <label asp-for="@item.Name"></label>
             </a>
         </li>
     }
