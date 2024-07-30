@@ -1,14 +1,496 @@
-﻿@{
+﻿@model WebBanHangOnline.Models.Entity.ShoppingCart
+@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_LayoutShop.cshtml";
 }
+
 
 @section scripts {
     <script>
         $(document).ready(() => {
             loadData();
-        });            
+        });
+
+        //let productId;
+
+        // window.addEventListener('popstate', e => {
+        //     if (e.state == 'shop') {
+        //         loadData();
+        //     }
+        //     else if (e.state == 'detail') {
+        //         shopDetail(`${productId}`);
+        //         console.log(`${e.state}`);
+        //     }
+        //     else{
+        //         //loadData();
+        //     }
+            
+        //  });
+
+
+        // Hàm load toàn bộ sản phẩm
+        // Vào db lấy thông tin sản phẩm theo View Model
+        // chạy vòng lặp trong danh sách trả về rồi hiển thị theo mẫu
+        function loadData() {
+            $("#defautSort").prop('hidden', false);
+            $("#product_list").empty();
+            $('.fruite-categorie > li').removeClass("bg-warning");
+            $(`.fruite-categorie > li:last-child`).addClass("bg-warning");
+
+            $.ajax({
+                type: 'post',
+                url: '/shop/loadData',
+                success: function (result) {
+                    if (result.length > 0) {
+                        result.forEach((item) => {
+                            $("#product_list").append(`
+                            
+                                <div class="col-md-6 col-lg-6 col-xl-4">
+                                    <div class="rounded position-relative fruite-item">
+                                        <a href="javascript:void(0)" onclick="shopDetail('${item.id}')" class="fruite-img">
+                                            <img src=${item.imageUrl} class="img-fluid w-100 rounded-top" alt="">
+                                        </a>
+                                        <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" 
+                                            style="top: 10px; left: 10px;">
+                                            ${item.productCategory}
+                                        </div>
+                                        <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                            <a href="javascript:void(0)"
+                                                onclick="shopDetail('${item.id}')"
+                                                class="d-flex justify-content-center">
+                                                <h4>${item.title}</h4>
+                                            </a>
+                                                    <p class="text-dark fs-5 d-flex justify-content-center">${item.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })} / kg</p>
+                                            <div class="d-flex justify-content-center">
+                                                <div class="input-group quantity mb-3" style="width: 100px;">
+                                                    <div class="input-group-btn">
+                                                        <button data-id=${item.id} type="button" class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                                            <i class="fa fa-minus"></i>
+                                                        </button>
+                                                    </div>
+                                                    <input id="quantity_${item.id}" type="text" class="form-control form-control-sm text-center border-0" value="1" name="quantity">
+                                                    <div class="input-group-btn">
+                                                        <button data-id=${item.id} type="button" class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-center flex-lg-wrap">
+                                                <button class="addToCartLink btn border border-secondary rounded-pill px-3 text-primary" data-id="${item.id}"><i class="fa fa-shopping-bag me-2 text-primary"></i>Thêm</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div
+                            `);
+                        });
+                        //history.pushState('shop', null, 'getall');
+                    }
+                },
+                errorr: function (errorr) {
+                    console.log(errorr);
+                },
+            });
+        }
+
+        function shopDetail(id) {
+            productId = id;
+            $("#product_list").empty();
+            $("#defautSort").prop('hidden', true);
+                 $.ajax({
+                type: 'post',
+                url: '/shop/loadShopDetail',
+                data: { id: id },
+                success: function (result) {
+                    $("#product_list").append(`
+                        <div class="col-lg-6">
+                            <div class="border rounded">
+                                <a href="#">
+                                    <img src=${result.imageUrl} class="img-fluid rounded" alt="Image">
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 px-5">
+                            <h4 class="fw-bold mb-3">${result.title}</h4>
+                            <p class="mb-3">Danh mục: ${result.category}</p>
+                            <h5 class="fw-bold mb-3">${result.price} $</h5>
+                            <div class="d-flex mb-4">
+                                <i class="fa fa-star text-secondary"></i>
+                                <i class="fa fa-star text-secondary"></i>
+                                <i class="fa fa-star text-secondary"></i>
+                                <i class="fa fa-star text-secondary"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <div class="input-group quantity mb-3" style="width: 100px;">
+                                <div class="input-group-btn">
+                                    <button data-id=${result.id} type="button" class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                                <input id="quantity_${result.id}"  type="text" class="form-control form-control-sm text-center border-0" value="1" name="quantity">
+                                <div class="input-group-btn">
+                                    <button data-id=${result.id} type="button" class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button  data-id=${result.id} class="addToCartLink btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary" ><i class="fa fa-shopping-bag me-2 text-primary"></i> Thêm</button>
+                            <button data-id=${result.id} class="buy btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary" ><i class="fa fa-shopping-bag me-2 text-primary"></i> Mua hàng</button>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <nav>
+                                <div class="nav nav-tabs mb-3">
+                                    <button class="nav-link active border-white border-bottom-0" type="button" role="tab"
+                                            id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                                            aria-controls="nav-about" aria-selected="true">
+                                        Description
+                                    </button>
+                                    <button class="nav-link border-white border-bottom-0" type="button" role="tab"
+                                            id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
+                                            aria-controls="nav-mission" aria-selected="false">
+                                        Reviews
+                                    </button>
+                                </div>
+                            </nav>
+                            <div class="tab-content mb-5">
+                                <div class="tab-pane active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                                    <div>${result.detail}</div>
+                                    <div class="px-2">
+                                        <div class="row g-4">
+                                            <div class="col-6">
+                                                <div class="row bg-light align-items-center text-center justify-content-center py-2">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Weight</p>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">1 kg</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row text-center align-items-center justify-content-center py-2">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Country of Origin</p>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Agro Farm</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row bg-light text-center align-items-center justify-content-center py-2">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Quality</p>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Organic</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row text-center align-items-center justify-content-center py-2">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Сheck</p>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Healthy</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row bg-light text-center align-items-center justify-content-center py-2">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Min Weight</p>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">250 Kg</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="nav-mission" role="tabpanel" aria-labelledby="nav-mission-tab">
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <p class="mb-2" style="font-size: 14px;">April 12, 2024</p>
+                                            <div class="d-flex justify-content-between">
+                                                <h5>Jason Smith</h5>
+                                                <div class="d-flex mb-3">
+                                                    <i class="fa fa-star text-secondary"></i>
+                                                    <i class="fa fa-star text-secondary"></i>
+                                                    <i class="fa fa-star text-secondary"></i>
+                                                    <i class="fa fa-star text-secondary"></i>
+                                                    <i class="fa fa-star"></i>
+                                                </div>
+                                            </div>
+                                            <p>
+                                                The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic
+                                                words etc. Susp endisse ultricies nisi vel quam suscipit
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="">
+                                            <p class="mb-2" style="font-size: 14px;">April 12, 2024</p>
+                                            <div class="d-flex justify-content-between">
+                                                <h5>Sam Peters</h5>
+                                                <div class="d-flex mb-3">
+                                                    <i class="fa fa-star text-secondary"></i>
+                                                    <i class="fa fa-star text-secondary"></i>
+                                                    <i class="fa fa-star text-secondary"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                </div>
+                                            </div>
+                                            <p class="text-dark">
+                                                The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic
+                                                words etc. Susp endisse ultricies nisi vel quam suscipit
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="nav-vision" role="tabpanel">
+                                    <p class="text-dark">
+                                        Tempor erat elitr rebum at clita. Diam dolor diam ipsum et tempor sit. Aliqu diam
+                                        amet diam et eos labore. 3
+                                    </p>
+                                    <p class="mb-0">
+                                        Diam dolor diam ipsum et tempor sit. Aliqu diam amet diam et eos labore.
+                                        Clita erat ipsum et lorem et sit
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                    //history.pushState('detail', null, 'detail');
+                },
+                errorr: function (errorr) {
+
+                },
+            });
+        }
+
+     // Hàm load sản phẩm theo danh mục
+    // Vào db lấy thông tin sản phẩm theo danh mục
+    // chạy vòng lặp trong danh sách trả về rồi hiển thị theo mẫu
+    function loadProductCategory(id, stt) {
+        $("#defautSort").prop('hidden', false);
+        $("#product_list").empty();
+        $('.fruite-categorie > li').removeClass("bg-warning");
+        $(`.fruite-categorie > li:nth-child(${stt})`).addClass("bg-warning");
+
+        $.ajax({
+            type: 'post',
+            url: '/shop/loadData',
+            data: { id: id },
+            success: function (result) {
+                if (result.length > 0) {
+                    result.forEach((item) => {
+                        $("#product_list").append(`
+                            <div class="col-md-6 col-lg-6 col-xl-4">
+                                <div class="rounded position-relative fruite-item">
+                                    <a href="javascript:void(0)" onclick="shopDetail(${item.id})" class="fruite-img">
+                                        <img src=${item.imageUrl} class="img-fluid w-100 rounded-top" alt="">
+                                    </a>
+                                    <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">${item.productCategory}</div>
+                                    <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                        <a href="javascript:void(0)" onclick="shopDetail(${item.id})">
+                                            <h4>${item.title}</h4>
+                                        </a>
+                                        <p>${item.description} </p>
+                                        <div class="d-flex justify-content-between flex-lg-wrap">
+                                            <p class="text-dark fs-5 fw-bold mb-0">${item.price} / kg</p>
+                                            <a href="/cart/addtocart/${item.id}" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Thêm vào giỏ</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div
+                        `);
+                    });
+
+                }
+            },
+            errorr: function (errorr) {
+                console.log(errorr);
+            },
+        });
+    }
+
+    // Biến global theo dõi giá trị quantity
+    let quantity = 1;
+
+    // Hàm sử lý sự kiện khi người dùng nhập quantity
+    // Tạo 1 href mới khi người dùng nhập 1 quantity mới
+    //function changehref(id) {
+        //onchange="changehref('${result.id}')"
+        //quantity = $(".quantity input").val();
+        //$(".addToCartLink").prop('href', `/cart/AddToCart/${id}?quantity=${quantity}`);
+        //removeAttr("data-bs-toggle");
+        //removeAttr("data-bs-target");
+    //}
+
+    // Hàm sử lý sự kiện khi người dùng ấn nút tăng hoặc giảm
+    $(document).on('click', '.quantity button', function () {
+        var button = $(this);
+        var id = button.data('id');
+        var oldValue = button.parent().parent().find('input').val();
+
+        if (button.hasClass('btn-plus')) {
+            quantity = parseFloat(oldValue) + 1;            
+        } else {
+            if (oldValue > 0) {
+                quantity = parseFloat(oldValue) - 1;                
+            } else {
+                quantity = 0;
+            }
+        }
+        button.parent().parent().find('input').val(quantity);
+    });
+
+        function addToCart(id) {
+        
+        if (quantity == 0) {
+            $("#modalQuantityZero").modal('show');
+        }
+        else {
+            $.ajax({
+                type: 'post',
+                url: '/shop/addtocart',
+                data: {
+                    productid : id,
+                    //quantity : quantity,
+                    quantity : $("#quantity_"+id).val(),
+                },
+                success: function (result) {
+                    $("#quantity").empty();
+                    $("#quantity").text('(' + result +')');
+                    quantity = 1;
+
+
+                    // $("#shopArea").hide();
+                    // $("#cartArea").empty();
+                    // $("#cartArea").prop('hidden', false);                    
+
+                    // $("#cartArea").append(`
+                    //     <div class="table-responsive">
+                    //         <table class="table">
+                    //             <thead>
+                    //                 <tr>
+                    //                     <th scope="col">Products</th>
+                    //                     <th scope="col">Name</th>
+                    //                     <th scope="col">Price</th>
+                    //                     <th scope="col">Quantity</th>
+                    //                     <th scope="col">Total</th>
+                    //                     <th scope="col">Handle</th>
+                    //                 </tr>
+                    //             </thead>
+                    //             <tbody></tbody>
+                    //         </table>
+                    //     </div>
+                    // `);
+
+                    // result.map((item) => {
+                    //     $("#cartArea tbody").append(`
+                    //         <tr>
+                    //             <th scope="row">
+                    //                 <div class="d-flex align-items-center">
+                    //                     <img src=${item.imageUrl} class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                    //                 </div>
+                    //             </th>
+                    //             <td>
+                    //                 <p class="mb-0 mt-4">${item.title}</p>
+                    //             </td>
+                    //             <td>
+                    //                 <p class="mb-0 mt-4">${item.price}$</p>
+                    //             </td>
+                    //             <td>
+                    //                 <div class="input-group quantity mt-4" style="width: 100px;">
+                    //                     <div class="input-group-btn">
+                    //                         <button class="btn btn-sm btn-minus rounded-circle bg-light border">
+                    //                             <i class="fa fa-minus"></i>
+                    //                         </button>
+                    //                     </div>
+                    //                     <input type="text" class="form-control form-control-sm text-center border-0" value=${item.quantity}>
+                    //                     <div class="input-group-btn">
+                    //                         <button class="btn btn-sm btn-plus rounded-circle bg-light border">
+                    //                             <i class="fa fa-plus"></i>
+                    //                         </button>
+                    //                     </div>
+                    //                 </div>
+                    //             </td>
+                    //             <td>
+                    //                 <p class="mb-0 mt-4">${item.bill}$</p>
+                    //             </td>
+                    //             <td>
+                    //                 <button class="btn btn-md rounded-circle bg-light border mt-4">
+                    //                     <i class="fa fa-times text-danger"></i>
+                    //                 </button>
+                    //             </td>
+                    //         </tr>
+                    //     `);
+
+                    // });
+
+                    // $("#cartArea").append(`
+                    //     <div class="mt-5">
+                    //         <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code">
+                    //         <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">Apply Coupon</button>
+                    //     </div>
+
+                    //     <div class="row g-4 justify-content-end">
+                    //         <div class="col-8"></div>
+                    //         <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+                    //             <div class="bg-light rounded">
+                    //                 <div class="p-4">
+                    //                     <h1 class="display-6 mb-4">Cart <span class="fw-normal">Total</span></h1>
+                    //                     <div class="d-flex justify-content-between mb-4">
+                    //                         <h5 class="mb-0 me-4">Subtotal:</h5>
+                    //                         <p class="mb-0">$96.00</p>
+                    //                     </div>
+                    //                     <div class="d-flex justify-content-between">
+                    //                         <h5 class="mb-0 me-4">Shipping</h5>
+                    //                         <div class="">
+                    //                             <p class="mb-0">Flat rate: $3.00</p>
+                    //                         </div>
+                    //                     </div>
+                    //                     <p class="mb-0 text-end">Shipping to Ukraine.</p>
+                    //                 </div>
+                    //                 <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
+                    //                     <h5 class="mb-0 ps-4 me-4">Total</h5>
+                    //                     <p class="mb-0 pe-4">$99.00</p>
+                    //                 </div>
+                    //                 <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">Proceed Checkout</button>
+                    //             </div>
+                    //         </div>
+                    //     </div>
+                    // `);
+
+                    // $("#shopNavbar").removeClass("active");
+                    // $("#cartNavbar").addClass("active");
+                },
+                error: function (error) {
+                    if (error.status == 401) {
+                        window.location.href = '/Identity/Account/Login';
+                    }
+                }
+            });
+        }
+    }
+
+        $(document).on('click', '.addToCartLink', function () {
+            let id = $(this).data('id');
+            addToCart(id);
+        });
+
+        $(document).on('click', '.buy', function () {
+            let id = $(this).data('id');
+            addToCart(id);
+            window.location.href = "http://localhost:5024/cart";
+        });
+
+        
 
     </script>
-    <script src="~/Customer/js/shop.js"></script>
+
 }
+
+        
+        
+
+    
+

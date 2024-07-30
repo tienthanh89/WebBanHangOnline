@@ -1,0 +1,11 @@
+﻿@model WebBanHangOnline.Models.ViewModels.CartViewComponentVM
+
+@{
+    var currentPage = this.Context.Request.Path;
+}
+
+<a href="/cart" id="cartNavbar" class="nav-item nav-link @(currentPage == "/cart" ? "active" : "") ">
+    <span>Giỏ hàng</span>
+     @* <i class="fa fa-shopping-bag fa-2x"></i>  *@
+     <span id="quantity">(@Model.TotalCart)</span>
+</a>

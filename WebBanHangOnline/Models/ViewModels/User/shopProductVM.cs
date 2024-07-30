@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebBanHangOnline.Models.ViewModels.User
 {
-    public class shopProductVM
+    public class ShopProductVM
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string? Title { get; set; }
         public string? ImageUrl { get; set; }
-        public decimal? Price { get; set; }
+        public double? Price { get; set; }
         public string? Description { get; set; }
         public string? ProductCategory { get; set; }
     }

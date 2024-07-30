@@ -1,0 +1,377 @@
+﻿@* @model WebBanHangOnline.Models.ViewModels.User.ShoppingCartVM *@
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="shopping-cart" class="card shadow border-0 mt-4">
+
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(() => {
+            LoadData();
+        });
+        
+        function PriceOrderTotal(id) {
+            //alert($('#quantity_' + id).val());
+            let orderTotal = $('#quantity_' + id).val() * $('#price_' + id).val();
+            $('#total_' + id).val(orderTotal);
+            let sum = 0;
+            $('.total').map((item) => {
+                //alert(item.val());
+                sum += item.val();
+            });
+        }
+
+        function LoadData() {
+            $.ajax({
+                type: 'post',
+                url: '/cart/LoadData',
+                success: function (result) {
+                    $('#shopping-cart').empty();
+                    $('#shopping-cart').append(`
+                        <div class="card-header bg-primary bg-gradient ml-0 py-4">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h2 class="text-light">
+                                        Giỏ hàng
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row pt-3">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Products</th>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Price(VND)</th>
+                                                    <th scope="col">Quantity</th>
+                                                    <th scope="col">Total(VND)</th>
+                                                    <th scope="col">Handle</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="list-cart">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                        
+                    `);
+                    if (result.cartTotal > 0) {
+                        $('#shopping-cart').append(`
+                            <div class="card-footer bg-white border-0">
+                                <div class="row">
+                                    <div class="col-md-4 offset-md-4">
+                                        <ul class="list-group mb-4">
+                                            <li class="d-flex justify-content-center gap-3 align-items-center">
+                                                <h5 class="text-dark fw-semibold text-uppercase">Tổng cộng:</h5>
+                                                <h4 id="OrderTotal" class="text-dark fw-bolder"></h4>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 offset-md-5 mb-3">
+                                        <button id="summary" class="btn btn-primary text-light border-0 bg-gradient py-2">Xác nhận đơn hàng</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    }
+                    else {
+                        $('#shopping-cart').append(`
+                            <tr>
+                                <td class="px-4">
+                                    <p>Không có đơn hàng</p>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                    if (result.shoppingCartList.length > 0) {
+                        
+                        result.shoppingCartList.forEach((item) => {
+                            $('#list-cart').append(`
+                                <tr>
+                                    <td class="col-2">
+                                        <img src=${item.product.imageUrl} class="" style="width: 80px" alt="">
+                                    </td>
+                                    <td class="col-2">
+                                        <p class="mb-0 mt-4">${item.product.title}</p>
+                                    </td>
+                                    <td class="col-2">
+                                                <input id="price_${item.product.id}" type="text" class="price border-0 bg-white mt-4" disabled value="${item.product.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}">
+                                    </td>
+                                    <td class="col-2">
+                                        <div class="input-group quantity mt-4" style="width: 100px;">
+                                            <div class="input-group-btn">
+                                                <button id="minus_${item.id}" data-id="${item.id}" class= " minus btn btn-sm btn-minus rounded-circle bg-light border" >
+                                                    <i class="fa fa-minus"></i>
+                                                </button>
+                                            </div>
+                                                <input id="quantity_${item.id}" type="text" onchange="ChangeQuantity('${item.id}')" class="quantity form-control form-control-sm text-center border-0" value="${item.quantity}">
+                                            <div class="input-group-btn">
+                                                <button id="plus_${item.id}" data-id="${item.id}" class="plus btn btn-sm btn-plus rounded-circle bg-light border">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="col-2">
+                                        <input disabled id="total_${item.product.id}" class="border-0 bg-white mb-0 mt-4 total" value="${(item.product.price * item.quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}" />
+                                    </td>
+                                    <td class="col-2">
+                                        <button onclick="DeleteCart('${item.id}')" class="btn btn-md rounded-circle bg-light border mt-4">
+                                            <i class="fa fa-times text-danger"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `);
+
+                        });
+                    }
+                    $('#OrderTotal').text(result.orderHeader.orderTotal.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+                    $('#quantity').empty();
+                    $('#quantity').text(result.cartTotal);
+                },
+        
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        $(document).on('click', '.minus', function () {
+            let id = $(this).data('id');
+            $.ajax({
+                type: 'put',
+                url: '/cart/Minus',
+                data: {id : id},
+                success: function(result){
+                    LoadData();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $(document).on('click', '.plus', function(){
+            let id = $(this).data('id');
+            $.ajax({
+                type: 'put',
+                url: '/cart/Plus',
+                data: { id: id },
+                success: function (result) {
+                    LoadData();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        })
+
+        function ChangeQuantity(id) {
+            let quantity = $('#quantity_' + id).val();
+            $.ajax({
+                type: 'put',
+                url: '/cart/ChangeQuantity',
+                data: {
+                    id : id,
+                    quantity : quantity
+                },
+                success: function (result) {
+                    LoadData();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function DeleteCart(id) {
+            $.ajax({
+                type: 'delete',
+                url: '/cart/Delete',
+                data: {id : id},
+                success: LoadData,
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        $(document).on('click', '#summary', function () {
+            $.ajax({
+                type: 'get',
+                url: '/cart/summary',
+                success: function (result) {
+                    $('#shopping-cart').empty();
+                    $('#shopping-cart').append(`
+                        <div class="card-header bg-primary bg-gradient text-light ml-0 py-4">
+                            <div class="row px-4">
+                                <div class="col-6">
+                                    <h2 class="pt-2 text-white">
+                                        Xác nhận đơn hàng
+                                    </h2>
+                                </div>
+                            <div class="col-6 text-end">
+                                <button id="back-to-cart" class="btn btn-outline-danger btn-sm">Trở về giỏ hàng</button>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="container rounded p-2">
+                                <div class="row">
+                                    <div class="col-12 col-lg-6 pb-4">
+                                        <div class="row">
+                                            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                                <span class="text-info">Địa chỉ giao hàng:</span>
+                                            </h4>
+                                        </div>
+                                        <div class="row my-1">
+                                            <div class="col-3">
+                                                <label>Họ và tên</label>
+                                            </div>
+                                            <div class="col-9">
+                                                <input  id="order-header-name" class="form-control" value="${result.orderHeader.name}"/>
+                                            </div>
+                                        </div>
+                                        <div class="row my-1">
+                                            <div class="col-3">
+                                                <label>Số điện thoại</label>
+                                            </div>
+                                            <div class="col-9">
+                                                <input id="order-header-phonenumber" value="${result.orderHeader.phoneNumber}" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="row my-1">
+                                            <div class="col-3">
+                                                <label>Địa chỉ nhà</label>
+                                            </div>
+                                            <div class="col-9">
+                                                <input id="order-header-streetaddress" value="${result.orderHeader.streetAddress}" class="form-control" />
+                                            </div>
+                                        </div>
+                                            <div class="row my-1">
+                                                <div class="col-3">
+                                                    <label>Quận</label>
+                                                </div>
+                                                <div class="col-9">
+                                                    <input id="order-header-district" value="${result.orderHeader.district}" class="form-control" />
+                                                </div>
+                                            </div>
+                                        <div class="row my-1">
+                                            <div class="col-3">
+                                                <label>Thành phố</label>
+                                            </div>
+                                            <div class="col-9">
+                                                <input id="order-header-city" value="${result.orderHeader.city}" class="form-control" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-lg-5 offset-lg-1">
+                                        <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                            <span class="text-info">Sản phẩm:</span>
+                                        </h4>
+                                        <div class="list-group mb-3">
+                                            <ul id="list-cart-summary" class="list-group">
+                                                
+                                            </ul>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-12 col-md-8 pt-2">
+                                    <p style="color:maroon; font-size:14px;">Thời gian giao hàng dự kiến: 3-5 ngày</p>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <a id="place-order"  type="" value="" class="btn form-control text-light bg-primary">Đặt hàng</a>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+
+                    $('#list-cart-summary').empty();
+                    result.shoppingCartList.forEach((item) => {
+                        $('#list-cart-summary').append(`
+                            <li class="list-group-item d-flex justify-content-between">
+                                <div>
+                                    <h6 class="my-0">${item.product.title} </h6>
+                                    <small class= "text-muted" > Số lượng: ${item.quantity} </small>
+                            </div>
+                                <span class= "text-muted" >
+                                    ${(item.quantity * item.product.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                </span>
+                            </li>
+                        `);
+                    });
+
+                    $('#list-cart-summary').append(`
+                        <li class="list-group-item d-flex justify-content-center gap-3 bg-light align-items-center">
+                            <small class="text-info">Tổng cộng:</small>
+                            <strong class="text-info">${result.orderHeader.orderTotal.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</strong>
+                        </li>
+                    `);
+                    
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+            
+        $(document).on('click', '#back-to-cart', LoadData);
+
+        $(document).on('click', '#place-order', function () {
+
+            $.ajax({
+                type: 'post'    ,
+                url: '/cart/SummaryPOST',
+                data: {
+                    Name: $('#order-header-name').val(),
+                    PhoneNumber: $('#order-header-phonenumber').val(),
+                    StreetAddress: $('#order-header-streetaddress').val(),
+                    City: $('#order-header-city').val(),
+                    District: $('#order-header-district').val(),
+                },
+                success: function (result) {
+                    $('#shopping-cart').empty();
+                    $('#quantity').text('0');
+                    $('#shopping-cart').append(`                        
+                        <div class="card bg-primary bg-gradient text-light ml-0 py-4">
+                            <div class="row px-4">
+                                <div class="col-6">
+                                    <h2 class="pt-2 text-white">
+                                        Đơn hàng được đặt thành công
+                                    </h2>
+                                    Mã đơn hàng của bạn là: ${result} <br/><br/>
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                    `);
+                },
+                error: function(error){
+                    console.log(error);
+                }
+            });
+        });
+
+    </script>
+
+}

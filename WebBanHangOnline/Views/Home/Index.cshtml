@@ -1,5 +1,146 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
+@* <button class="btn btn-primary" onclick="renderApiProduct()">Get Product</button>
+<button class="btn btn-primary" onclick="renderApiProductCategory()">Get Product Category</button>
+<button class="btn btn-primary" onclick="createApiProduct()">Create Product</button>
+<button class="btn btn-primary" onclick="renderApiProductController()">Get Product from Controller</button>
 
+<label>Id</label>
+<input type="text" id="id" />
+<label>Tên sản phẩm</label>
+<input type="text" id="tensanpham" />
+<label>Giá</label>
+<input type="text" id="gia" />
+<label>Mô tả</label>
+<input type="text" id="mota" />
+<button onclick="addProduct()">ThêmFromAjax</button>
+<button onclick="addProductController()">ThêmFromController</button>
+<button onclick="editProductController()">EditFromController</button> *@
+
+
+@section scripts {
+    <script>
+        function renderApiProduct() {
+            $.ajax({
+                url: 'http://localhost:5241/api/Product',
+                type: 'get',
+                // Kết quả đầu 1,2,3
+                success: function (result) {
+                    console.log(result);
+                },
+                // Kết quả đầu  4,5
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function renderApiProductCategory() {
+            $.ajax({
+                url: 'https://localhost:7000/api/TbProductCategory',
+                type: 'get',
+                // Kết quả đầu 1,2,3
+                success: function (result) {
+                    console.log(result);
+                },
+                // Kết quả đầu  4,5
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+
+        function renderApiProductController() {
+            $.ajax({
+                type: 'get',
+                url: '/home/demoapi',
+                // Kết quả đầu 1,2,3
+                success: function (result) {
+                    console.log(result);
+                },
+                // Kết quả đầu  4,5
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+
+        function addProduct() {
+            let tensanpham = $("#tensanpham").val();
+            let gia = $("#gia").val();
+            let mota = $("#mota").val();
+            $.ajax({
+                url: 'http://localhost:5241/api/Product',
+                type: 'POST',
+                processData: false,
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    name: tensanpham,
+                    price: gia,
+                    description: mota
+                }),
+                success: function (data) {
+                    console.log(data);
+                    //$("#staticBackdrop").modal('hide');
+                    //renderTableProduct();
+                },
+                error: function (error) {
+                    console.log(error)
+                },
+            });
+        }
+
+
+        function addProductController() {
+            let tensanpham = $("#tensanpham").val();
+            let gia = $("#gia").val();
+            let mota = $("#mota").val();
+            $.ajax({
+                url: '/home/addproduct',
+                type: 'POST',
+                data: {
+                    Name: tensanpham,
+                    Price: gia,
+                    Description: mota
+                },
+                success: function (data) {
+                    console.log(data);
+                    //$("#staticBackdrop").modal('hide');
+                    //renderTableProduct();
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            });
+        }
+
+        function editProductController() {
+            let id = $("#id").val();
+            let tensanpham = $("#tensanpham").val();
+            let gia = $("#gia").val();
+            let mota = $("#mota").val();
+            $.ajax({
+                url: '/home/editproduct',
+                type: 'PUT',
+                data: {
+                    Id: id,
+                    Name: tensanpham,
+                    Price: gia,
+                    Description: mota
+                },
+                success: function (data) {
+                    console.log(data);
+                    //$("#staticBackdrop").modal('hide');
+                    //renderTableProduct();
+                },
+                error: function (error) {
+                    console.log(error)
+                }
+            });
+        }
+
+    </script>
+}

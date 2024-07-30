@@ -50,29 +50,6 @@
                             <input type="checkbox" asp-for="@Model.TbNews.IsActive" class="mx-4 " style="width:6rem" placeholder="" checked>
                             <span asp-validation-for="@Model.TbNews.Detail" class="text-danger"></span>
                         </div>
-                        <div class="form-group mb-3">
-                            <label asp-for="@Model.TbNews.CategoryId">CategoryId</label>
-                            <select asp-for="@Model.TbNews.CategoryId" asp-items="@Model.CategoryList" class="form-select">
-                                <option disabled selected>--Selecte Category--</option>
-                            </select>
-                            <span asp-validation-for="@Model.TbNews.CategoryId" class="text-danger"></span>
-                        </div>
-                        
-                        <div class="form-group mb-3">
-                        <label asp-for="@Model.TbNews.SeoTitle">SeoTitle</label>
-                        <input asp-for="@Model.TbNews.SeoTitle" class="form-control" placeholder="SeoTitle">
-                        <span asp-validation-for="@Model.TbNews.SeoTitle" class="text-danger"></span>
-                        </div>
-                        <div class="form-group mb-3">
-                        <label asp-for="@Model.TbNews.SeoDescription">SeoDescription</label>
-                        <input asp-for="@Model.TbNews.SeoDescription" class="form-control" placeholder="SeoDescription">
-                        <span asp-validation-for="@Model.TbNews.SeoDescription" class="text-danger"></span>
-                        </div>
-                        <div class="form-group mb-4">
-                        <label asp-for="@Model.TbNews.SeoKeyWords">SeoKeyWords</label>
-                        <input asp-for="@Model.TbNews.SeoKeyWords" class="form-control" placeholder="SeoKeyWords">
-                        <span asp-validation-for="@Model.TbNews.SeoKeyWords" class="text-danger"></span>
-                        </div>
                     </div>
                     <div class="form-group">
                         <a class="btn btn-primary" href="/admin/news">Quay lại</a>

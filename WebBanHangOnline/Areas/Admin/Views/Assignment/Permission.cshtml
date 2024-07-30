@@ -1,0 +1,439 @@
+﻿﻿
+@{
+    ViewData["Title"] = "Permission";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section search {
+    <!-- Search -->
+    @*render search partial view*@
+    @{
+        await Html.RenderPartialAsync("SearchPartial");
+    }
+    <!-- /Search -->
+}
+
+<div class="card flex-grow-1">
+    <div class="card-header text-end">
+        <button type="button" id="showmodal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCreateUpdatePermission">
+            
+            <i class='bx bx-plus me-1'></i>Thêm mới
+        </button>
+        <button type="button" class="btn btn-danger" onclick="DeletePermissionChecked()">
+            <i class='bx bx-trash-alt me-1'></i>Xóa
+        </button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive text-nowrap">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="text-center">
+                        <th>
+                            <input type="checkbox" id="selectedAllPermission" />
+                        </th>
+                        <th>Tài khoản</th>
+                        <th>Thư điện tử</th>
+                        <th>Tên vai trò</th>
+                        <th>Trạng thái</th>
+                        <th>Sự kiện</th>
+                    </tr>
+                </thead>
+                <tbody id="listpermission"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@{
+    await Html.RenderPartialAsync("ModalCreateUpdatePermissionPartial");
+    await Html.RenderPartialAsync("ConfirmDeletePermissionCheckedModal");
+}
+
+
+@section Scripts {
+    <script>
+        $(document).ready(() => {
+            renderTablePermission();
+
+            $('input[name="searchStr"]').keydown(function (event) {
+                if (event.keyCode === 13) { // Phím Enter
+                    Search(); // Gọi hàm Search
+                }
+            });
+        });
+
+        /*
+            $('#userId').val(data.userId);
+            $('#roleId').val(data.roleId);
+        */
+
+        function CreateUpdatePermission() {
+            var userid = $('#selectaccount').val();
+            let arrRoleId = new Array();
+            arrRoleId = $('input[type="checkbox"]:checked').map(function () {
+                return $(this).val();
+            }).get();
+            console.log(arrRoleId);
+
+            if ($('#userId').val() == '' || $('#roleId').val() == '') {
+                $.ajax({
+                    url: '/permission/create',
+                    type: 'POST',
+                    data: {
+                        userId: userid,
+                        arrRoleId: arrRoleId,                    },
+                    success: function (data) {
+                        //toastr.success('Phân quyền thành công');
+                        $('#modalCreateUpdatePermission').modal('hide');
+                        renderTablePermission();
+                    },
+                    error: function (error) {
+                        //toastr.error('Quyền đã tồn tại');
+                        $('#modalCreateUpdatePermission').modal('hide');
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    url: '/assignment/permission/edit',
+                    type: 'put',
+                    data: {
+                        userId: userid,
+                        arrRoleId: arrRoleId,
+                        oldRoleId: $('#roleId').val()
+                    },
+                    success: function (data) {
+                        //toastr.success('Phân quyền thành công');
+                        $('#modalCreateUpdatePermission').modal('hide');
+                        renderTablePermission();
+                    },
+                    error: function (error) {
+                        //toastr.error('Quyền đã tồn tại');
+                        $('#modalCreateUpdatePermission').modal('hide');
+                    }
+                });
+            }
+        }
+
+        function renderTablePermission() {
+            $('#listpermission').empty();
+            $.ajax({
+                url: '/assignment/permission/all',
+                type: 'GET',
+                success: function (data) {
+                    console.log("Danh sach du lieu: ", data);
+                    if (data.length > 0) {
+                        data.forEach((item, index) => {
+                            var parentName = data.filter(x => x.categoryId === item.parentId)[0].categoryName;
+                            $('#listpermission').append(`
+								<tr>
+                                    <td class="text-center"><input class="permissionItem" 
+                                        value="${item.userId},${item.roleId}" 
+                                        type="checkbox"/>
+                                    </td>
+                                    <td>${item.userName}</td>
+									<td>${item.email}</td>
+									<td class="text-center">${item.roleName}</td>
+                                    <td class="text-center ${item.isActive ? "text-success" : "text-danger"}">
+                                        ${item.isActive ? "Kích hoạt" : "Khóa"}
+                                    </td>
+									<td class="text-center">
+										<button type="button" class="btn btn-warning" 
+                                                onclick="EditPermission('${item.userId}', '${item.roleId}')">
+                                                Sửa
+                                        </button>
+										<button type="button" class="btn btn-danger"
+                                                onclick = "DeletePermission('${item.userId}', '${item.roleId}')" >
+                                                Xóa
+                                        </button>
+									</td>
+								</tr>
+							`);
+                        });
+                    }
+                    
+                    else {
+                        $('#listpermission').append(`
+							<tr>
+								<td class="text-center" colspan="5">Không có dữ liệu</td>
+							</tr>
+						`);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        //xử lý sự kiện mở modal thì thực hiện renderSelectAccount
+        // $('#modalCreateUpdatePermission').on('show.bs.modal', function (e) {
+        //     renderSelectAccount();
+        //     renderTableRoles();
+        // });
+
+        $('#showmodal').on('click', function () {
+            $('#modalCreateUpdatePermission').modal('show');
+            renderSelectAccount();
+            renderTableRoles();
+        });
+
+        function renderSelectAccount() {
+            $.ajax({
+                url: '/account/all',
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $('#selectaccount').empty();
+                        $('#selectaccount').append(`
+                            <option value="0">Chọn tài khoản</option>
+                        `);
+                        data.forEach((item, index) => {
+                            $('#selectaccount').append(`
+                                        <option value="${item.id}">${item.userName}</option>
+                            `);
+                        });
+                    } else {
+                        $('#selectaccount').append(`
+                                    <option value="-1">Không có dữ liệu</option>
+                                `);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function renderSelectAccountEdit() {
+            $.ajax({
+                url: '/account/all',
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $('#selectaccount').empty();
+                        $('#selectaccount').append(`
+                                            <option value="0">Chọn tài khoản</option>
+                                        `);
+                        data.forEach((item, index) => {
+                            $('#selectaccount').append(`
+                                <option id="${item.id}" value="${item.id}">${item.userName}</option>
+                            `);
+                        });
+
+                    } else {
+                        $('#selectaccount').append(`
+                            <option value="-1">Không có dữ liệu</option>
+                        `);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function renderTableRoles() {
+            $.ajax({
+                url: '/assignment/roles/all',
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $('#listassignrole').empty();
+                        data.forEach((item, index) => {
+                            $('#listassignrole').append(`
+                                <tr>
+                                    <td class="text-center">
+                                        <input id="${item.id}" type="checkbox" class="roleItem" value=${item.id}>
+                                    </td>
+                                    <td>${item.name}</td>
+                                </tr>
+                            `);
+                        });
+                    }
+                    else {
+                        $('#listassignrole').append(`<tr>
+                            <td class="text-center" colspan="2">Không có dữ liệu</td>
+                        </tr>`);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function EditPermission(userId, roleId) {
+            $('#modalCreateUpdatePermission').modal('show');
+            renderSelectAccount();
+            renderTableRoles();
+
+            $.ajax({
+                url: '/assignment/permission/getbyid',
+                type: 'get',
+                data: {
+                    userId: userId,
+                    roleId: roleId
+                },
+                success: function (data) {
+                    if (data) {
+                        setTimeout(function () {
+                            $('option').each(function () {
+                                if ($(this).val() == data.userId) {
+                                    $(this).prop('selected', true);
+                                }
+                            });
+
+                            $('#selectaccount').prop('disabled', true);
+
+                            $('#userId').val(data.userId);
+                            $('#roleId').val(data.roleId);
+                            $('#' + data.roleId).prop('checked', true);
+                        }, 200);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                    alert('Không tìm thấy sản phẩm');
+                }
+            });
+        }
+
+        function DeletePermission(userId, roleId) {
+            $.ajax({
+                url: '/assignment/permission/delete/',
+                type: 'DELETE',
+                data: {
+                    userId: userId,
+                    roleId: roleId
+                },
+                success: function (data) {
+                    renderTablePermission();
+                },
+                error: function (error) {
+                    console.log(error);
+                    alert('Xóa sản phẩm thất bại');
+                }
+            });
+        }
+
+        $("#modalCreateUpdatePermission").on("hide.bs.modal", () => {
+            ClearForm();
+        });
+
+        function ClearForm() {
+            $('#selectaccount').val('');
+            $('#selectaccount').prop('disabled', false);
+            $('input[type="checkbox"]:checked').val('');
+            $('#userId').val('');
+            $('#roleId').val('');
+        }
+
+        $("#selectedAllRole").change(function() {
+            if (this.checked) {
+                $(".roleItem").prop("checked", true);
+            }
+            else {
+                $(".roleItem").prop("checked", false);
+            }
+        });
+
+        $("#selectedAllPermission").change(function () {
+            if (this.checked) {
+                $(".permissionItem").prop("checked", true);
+            }
+            else {
+                $(".permissionItem").prop("checked", false);
+            }
+        });
+
+        function DeletePermissionChecked() {
+            $('#confirmDeletePermissionCheckedModal').modal('show');
+            let arrPermission = new Array();
+
+            $('#confirmDeletePermissionChecked').on('click', function () {
+                var checkedBoxes = $('.permissionItem').filter(':checked');
+                
+                checkedBoxes.each(function () {
+                    arrPermission.push($(this).val());
+                });
+                handleDeleteCheckedOPermission(arrPermission);
+                
+
+            });
+        }
+
+        function handleDeleteCheckedOPermission(arrPermission) {
+            console.log(arrPermission);
+            $.ajax({
+                type: 'delete',
+                url: '/assignment/permission/deleterangepermission',
+                data: {
+                    arrPermission: arrPermission
+                },
+                success: function (data) {
+                    renderTablePermission();
+                    $('#confirmDeletePermissionCheckedModal').modal('hide');
+
+                    //toastr.success('Xóa vai trò thành công');
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function Search() {
+            let searchStr = $('input[name="searchStr"]').val();
+            $.ajax({
+                type: 'get',
+                url: '/assignment/permission/search',
+                data: {
+                    searchStr: searchStr
+                },
+                success: function (data) {
+                    if (data.length > 0) {
+                        LoadData(data);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        };
+
+        function LoadData(data) {
+            console.log(data);
+            let i = 1;
+            $('#listpermission').empty();
+            data.forEach((item, index) => {
+                var parentName = data.filter(x => x.categoryId === item.parentId)[0].categoryName;
+                $('#listpermission').append(`
+                    <tr>
+                        <td class="text-center"><input class="permissionItem"
+                            value="${item.userId},${item.roleId}"
+                            type="checkbox"/>
+                        </td>
+                        <td>${item.userName}</td>
+                        <td>${item.email}</td>
+                        <td class="text-center">${item.roleName}</td>
+                        <td class="text-center ${item.isActive ? "text-success" : "text-danger"}">
+                            ${item.isActive ? "Kích hoạt" : "Khóa"}
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-warning"
+                                    onclick="EditPermission('${item.userId}', '${item.roleId}')">
+                                    Sửa
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick = "DeletePermission('${item.userId}', '${item.roleId}')" >
+                                    Xóa
+                            </button>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+
+    </script>
+}

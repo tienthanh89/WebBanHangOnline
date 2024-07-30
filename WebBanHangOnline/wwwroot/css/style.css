@@ -1,3 +1,14 @@
+/**** Divider ***/
+.divider-text::after,
+.divider-text::before {
+    color: white;
+    content: "";
+    flex: 1;
+    border-bottom: 1px dashed #dddd;
+    margin: auto 0.25rem;
+    box-shadow: 0 -2px;
+}
+/*** Divider End ***/
 
 /*** Spinner Start ***/
 #spinner {
@@ -178,7 +189,7 @@
 
 /*** Hero Header ***/
 .hero-header {
-    background: linear-gradient(rgba(248, 223, 173, 0.1), rgba(248, 223, 173, 0.1)), url(../img/hero-img.jpg);
+    /*background: linear-gradient(rgba(248, 223, 173, 0.1), rgba(248, 223, 173, 0.1)), url(../img/hero-img.jpg);*/
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -219,7 +230,7 @@
 
 .page-header {
     position: relative;
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/cart-page-header-img.jpg);
+    /*background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/cart-page-header-img.jpg);*/
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;

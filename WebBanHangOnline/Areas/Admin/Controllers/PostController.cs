@@ -3,20 +3,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebBanHangOnline.Models.ViewModels;
 using WebBanHangOnline.Models;
+using WebBanHangOnline.Models.DbContext;
 using X.PagedList;
+using Microsoft.AspNetCore.Authorization;
+using WebBanHangOnline.Models.Entity;
 
 namespace WebBanHangOnline.Areas.Admin.Controllers
 {
 
     [Area("Admin")]
+    [Authorize(Roles = $"{TbStaticField.Role_Admin}")]
     public class PostController : Controller
     {
-        private readonly WebBanHangDemoContext _db;
+        private readonly WebBanHangOnlineContext _db;
         // Tạo môi trường luu trữu web
         private readonly IWebHostEnvironment _webHostEnvironment;
 
 
-        public PostController(WebBanHangDemoContext db, IWebHostEnvironment webHostEnvironment)
+        public PostController(WebBanHangOnlineContext db, IWebHostEnvironment webHostEnvironment)
         {
             _db = db;
             _webHostEnvironment = webHostEnvironment;
@@ -34,7 +38,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         //    return View(dbSetTbPostVM);
         //}
 
-        public IActionResult Index( int? page, string searchStr = "")
+        public IActionResult Index(int? page, string searchStr = "")
         {
             var items = _db.TbPosts.Select(n => new TbCategoryTbPostVM
             {
@@ -44,18 +48,18 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
 
             if (searchStr != "")
             {
-                 items = _db.TbPosts.Select(n => new TbCategoryTbPostVM
+                items = _db.TbPosts.Select(n => new TbCategoryTbPostVM
                 {
                     Post = n,
                     Category = n.tbCategory,
-                }).AsNoTracking().Where(x=>x.Post.Title.ToLower().Contains(searchStr.ToLower())).OrderByDescending(x => x.Post.Id);
-                
+                }).AsNoTracking().Where(x => x.Post.Title.ToLower().Contains(searchStr.ToLower())).OrderByDescending(x => x.Post.Id);
+
             }
-            
+
             var pageSize = 7;
-            int pageNumber = page == null || page < 1 ? 1 : page.Value;           
+            int pageNumber = page == null || page < 1 ? 1 : page.Value;
             PagedList<TbCategoryTbPostVM> lst = new PagedList<TbCategoryTbPostVM>(items, pageNumber, pageSize);
-            
+
             return View(lst);
         }
 
@@ -77,7 +81,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
 
         public IActionResult Add_MVC()
         {
-            TbPostVM tbPostVM  = new TbPostVM()
+            TbPostVM tbPostVM = new TbPostVM()
             {
                 TbPost = new TbPost(),
                 CategoryList = _db.TbCategories.Select(u => new SelectListItem { Text = u.Title, Value = u.Id.ToString() })
@@ -108,12 +112,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
 
                     tbPostVM.TbPost.ImageUrl = @"\images\admin\post\" + fileName;
                 }
-                tbPostVM.TbPost.CreatedDate = DateTime.Now;
-                tbPostVM.TbPost.ModifierDate = DateTime.Now;
-                if (tbPostVM.TbPost.Title != null)
-                {
-                    tbPostVM.TbPost.Alias = WebBanHangOnline.Models.Common.Filter.FilterChar(tbPostVM.TbPost.Title);
-                }
+                tbPostVM.TbPost.Id = Guid.NewGuid();
 
                 //tbPost.tbCategory = TbProductVM.TbPost.Include(n =>n.tbCategory).FirstOrDefault(n=>n.Id == id);
 
@@ -128,7 +127,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
             return View(tbPostVM);
         }
 
-        public ActionResult Edit_MVC(int? id)
+        public ActionResult Edit_MVC(Guid? id)
         {
             if (id == null)
             {
@@ -168,13 +167,6 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
                 if (tbPost_Old != null)
                 {
                     _db.Entry(tbPost_Old).State = EntityState.Detached;
-                    tbPostVM.TbPost.CreatedDate = tbPost_Old.CreatedDate;
-                    tbPostVM.TbPost.CreatedBy = tbPost_Old.CreatedBy;
-                    tbPostVM.TbPost.ModifierDate = DateTime.Now;
-                    if (tbPostVM.TbPost.Title != null)
-                    {
-                        tbPostVM.TbPost.Alias = WebBanHangOnline.Models.Common.Filter.FilterChar(tbPostVM.TbPost.Title);
-                    }
                     if (file == null)
                     {
                         tbPostVM.TbPost.ImageUrl = tbPost_Old.ImageUrl;
@@ -208,7 +200,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(int? id)
+        public IActionResult Delete(Guid? id)
         {
             var item = _db.TbPosts.FirstOrDefault(x => x.Id == id);
             if (item != null)
@@ -221,7 +213,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult changeStatus(int id)
+        public IActionResult changeStatus(Guid id)
         {
             var item = _db.TbPosts.FirstOrDefault(x => x.Id == id);
             if (item != null)
@@ -242,7 +234,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
                 Category = n.tbCategory,
             }).AsNoTracking().OrderByDescending(x => x.Post.Id);
 
-            return Json(new {data = items});
+            return Json(new { data = items });
         }
         #endregion
     }

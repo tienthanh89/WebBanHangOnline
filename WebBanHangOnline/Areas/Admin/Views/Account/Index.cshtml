@@ -1,0 +1,388 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section search {
+    <!-- Search -->
+    @*render search partial view*@
+    @{
+        await Html.RenderPartialAsync("SearchPartial");
+    }
+    <!-- /Search -->
+}
+
+<div class="card flex-grow-1">
+    <div class="card-header text-end">
+        <button type="button" class="btn btn-danger" onclick="DeleteMultiAccounts()">
+            <i class='bx bx-trash-alt me-1'></i>Xóa
+        </button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCreateUpdateAccount">
+            <i class='bx bx-plus me-1'></i>Thêm mới
+        </button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive text-nowrap">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="text-center">
+                        <th>
+                            <input type="checkbox" id="selectedAllCheckbox"  />
+                        </th>
+                        <th>Tài khoản</th>
+                        <th>Thư điện tử</th>
+                        <th>Xác nhận Email</th>
+                        <th>Điện thoại</th>
+                        <th>Trạng thái</th>
+                        <th>Sự kiện</th>
+                    </tr>
+                </thead>
+                <tbody id="listaccount"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("ModalCreateUpdateAccountPartial")
+
+@section Scripts {
+    <script>
+        ﻿$(document).ready(() => {
+            renderTableAccount();
+
+            $('input[name="searchStr"]').keydown(function (event) {
+                if (event.keyCode === 13) { // Phím Enter
+                    Search(); // Gọi hàm Search
+                }
+            });
+        });
+
+        function CreateUpdateAccount() {
+            var id = $('#idAccount').val();
+            var email = $('#email').val();
+            var matkhau = $('#matkhau').val();
+            var hoten = $('#hoten').val();
+            var phone = $('#phone').val();
+            var city = $('#city').val();
+            var district = $('#district').val();
+            var address = $('#address').val();
+            var mota = $('#mota').val();
+            var kichhoat = $('#kichhoat').is(':checked');
+
+            $.ajax({
+                url: '/account/create',
+                type: 'POST',
+                data: {
+                    Id : id,
+                    Email: email,
+                    PasswordHash: matkhau,
+                    Name: hoten,
+                    Phonenumber: phone,
+                    City: city,
+                    District: district,
+                    StreetAddress: address,
+                    Description: mota,
+                    IsActive: kichhoat
+                },
+                success: function () {
+                    // if (id == '') {
+                    //     toastr.success('Thêm tài khoản thành công');
+                    // }
+                    // else { 
+                    //     toastr.success('Cập nhật tài khoản thành công');
+                    // }
+                    resetFormCreateUpdate();
+                    $('#modalCreateUpdateAccount').modal('hide');
+                    renderTableAccount();
+                },
+                error: function (error) {
+                    // if (id == '') {
+                    //     toastr.error('Thêm tài khoản thất bại');
+                    // }
+                    // else { 
+                    //     toastr.error('Cập nhật tài khoản thất bại');
+                    // }
+                    $('#modalCreateUpdateAccount').modal('hide');
+                }
+            });
+        }
+
+        function renderTableAccount() {
+            $('#listaccount').empty();
+            $.ajax({
+                url: '/account/all',
+                type: 'GET',
+                success: function (data) {
+                    console.log(data);
+                    if (data.length > 0) {
+                        $("#listaccount").empty();
+                        data.forEach((item, index) => {
+                            $('#listaccount').append(`
+							    <tr>
+								    <td class="text-center"><input class="checkboxItem" type="checkbox" value=${item.id} /></td>
+                                    <td>${item.userName}</td>
+								    <td>${item.email}</td>
+								    <td class="text-center ${item.emailConfirmed ? "text-success" : "text-danger"} email-confirm" data-id="${item.id}" >${item.emailConfirmed ? "Đã kích hoạt" : "Chưa kích hoạt"}</td>
+								    <td>${item.phoneNumber == null ? "" : item.phoneNumber}</td>
+                                    <td class="${item.lockoutEnd? "text-danger" : "text-success"} is-active" data-id="${item.id}" >${item.lockoutEnd? "Khóa" : "Hoạt động" }</td>
+                                    <td class="text-center">
+									    <button type="button" class="btn btn-primary" onclick="EditAccount('${item.id}')">Sửa</button>
+									    <button type="button" class="btn btn-danger" onclick="DeleteAccount('${item.id}')">Xóa</button>
+								    </td>
+							    </tr>
+						    `);
+                            if(item.lockoutEnd != null){
+                                console.log(item.lockoutEnd)
+                            }
+                        });
+                    }
+                    else {
+                        $('#listaccount').append(`
+						    <tr>
+							    <td class="text-center" colspan="6">Không có dữ liệu</td>
+						    </tr>
+					    `);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function renderProductTypes() {
+            $('#danhmuc').empty();
+            $.ajax({
+                url: '/category/product-type/all',
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        data.forEach((item, index) => {
+                            $('#danhmuc').append(`
+                                <option value="${item.id}">${item.name}</option>
+                            `);
+                        });
+                    }
+                    else {
+                        $('#danhmuc').append(`
+                            <option value="">Không có dữ liệu</option>
+                        `);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function EditAccount(id) {
+            $.ajax({
+                url: '/account/getById/' + id,
+                type: 'GET',
+                success: function (data) {
+                    if (data) {
+                        $('#idAccount').val(data.id);
+                        $('#email').val(data.email);
+                        $('#hoten').val(data.name);
+                        $('#phone').val(data.phoneNumber);
+                        $('#city').val(data.city);
+                        $('#district').val(data.district);
+                        $('#address').val(data.streetAddress);
+                        $('#mota').val(data.description);
+                        $('#kichhoat').prop('checked', data.isActive);
+
+                        $('#modalCreateUpdateAccount').modal('show');
+                    }
+                    else {
+                        alert('Không tìm thấy sản phẩm');
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function DeleteAccount(id) {
+            $.ajax({
+                url: '/account/delete/',
+                type: 'post',
+                data: {id ,id},
+                success: function () {
+                    renderTableAccount();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function resetFormCreateUpdate() {
+            $('#idCategory').val('');
+            $('#tendanhmuc').val('');
+            $('#danhmuccha').prop('selectedIndex', 0);
+            $('#vitri').val('');
+            $('#mota').val('');
+            $('#kichhoat').prop('checked', false);
+        }
+
+        //xử lý load dữ liệu danh mục cha
+        function renderCategoryParent() {
+            $.ajax({
+                url: '/category/all',
+                type: 'GET',
+                success: function (data) {
+                    if (data.length > 0) {
+                        data.forEach((item, index) => {
+                            $('#danhmuccha').append(`
+                                <option value="${item.categoryId}">${item.position + " - " + item.categoryName}</option>
+                            `);
+                        });
+                    }
+                    else {
+                        $('#danhmuccha').append(`
+                            <option value="">Không có dữ liệu</option>
+                        `);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        // Gọi hàm ClearForm khi ẩn modal modalCreateUpdateAccount
+        $("#modalCreateUpdateAccount").on("hide.bs.modal", () => {
+            ClearForm();
+        });
+
+        // Hàm ClearForm
+        function ClearForm() {
+            $('#idAccount').val("");
+            $('#email').val("");
+            $('#matkhau').val("");
+            $('#hoten').val("");
+            $('#phone').val("");
+            $('#city').val("");
+            $('#district').val("");
+            $('#address').val("");
+            $('#mota').val("");
+            $('#kichhoat').prop('checked',true);
+        }
+
+        // Xử lý sự kiện ấn nút selectedAllCheckbox
+        $("#selectedAllCheckbox").change(function() {
+            if (this.checked) {
+                $(".checkboxItem").prop('checked', true);
+            }
+            else {
+                $(".checkboxItem").prop('checked', false);
+            }
+        });
+
+        // Hàm xóa tất cả account
+        function DeleteMultiAccounts() {
+            $(".checkboxItem").each(function () {
+                if (this.checked) {
+                    DeleteAccount($(this).val());
+                }
+            });
+        }
+
+        // Xử lý sự kiện click .is-active
+        $(document).on("click",".is-active",function () {
+            let id = $(this).data('id');
+            let input = $(this);
+
+            $.ajax({
+                type: 'get',
+                url: '/account/isActive',
+                data: { Id : id },
+                success: function (data) {
+                    if (data == null) {
+                        input.removeClass("text-danger");
+                        input.addClass('text-success');
+                        input.text("Hoạt động");
+                    }
+                    else{
+                        input.removeClass('text-success');
+                        input.addClass('text-danger');
+                        input.text('Khóa');
+                    }
+                },
+                error: function (error) {
+
+                }
+            });
+        });
+
+        // Xử lý sự kiện click email-confimed
+        $(document).on("click",".email-confirm",function () {
+            let id = $(this).data('id');
+            let emailConfirm = $(this);
+
+            $.ajax({
+                type: 'get',
+                url: '/account/emailConfirm',
+                data: { Id : id },
+                success: function (data) {
+                    if (data) {
+                        emailConfirm.removeClass("text-danger");
+                        emailConfirm.addClass('text-success');
+                        emailConfirm.text("Đã kích hoạt");
+                    }
+                    else{
+                        emailConfirm.removeClass('text-success');
+                        emailConfirm.addClass('text-danger');
+                        emailConfirm.text('Chưa kích hoạt');
+                    }
+                },
+                error: function (error) {
+
+                }
+            });
+        });
+
+        function Search () {
+            let searchStr = $('input[name="searchStr"]').val();
+            $.ajax({
+                type: 'get',
+                url: '/account/search',
+                data: {
+                    searchStr: searchStr
+                },
+                success: function (data) {
+                    if (data.length > 0) {
+                        LoadData(data);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        };
+
+        function LoadData(data) {
+            console.log(data);
+            let i = 1;
+            $('#listaccount').empty();
+            data.map((item) => {
+                $('#listaccount').append(`
+					<tr>
+						<td class="text-center"><input class="checkboxItem" type="checkbox" value=${item.id} /></td>
+                        <td>${item.userName}</td>
+						<td>${item.email}</td>
+						<td class="text-center ${item.emailConfirmed ? "text-success" : "text-danger"} email-confirm" data-id="${item.id}" >${item.emailConfirmed ? "Đã kích hoạt" : "Chưa kích hoạt"}</td>
+						<td>${item.phoneNumber == null ? "" : item.phoneNumber}</td>
+                        <td class="${item.lockoutEnd ? "text-danger" : "text-success"} is-active" data-id="${item.id}" >${item.lockoutEnd ? "Khóa" : "Hoạt động"}</td>
+                        <td class="text-center">
+							<button type="button" class="btn btn-primary" onclick="EditAccount('${item.id}')">Sửa</button>
+							<button type="button" class="btn btn-danger" onclick="DeleteAccount('${item.id}')">Xóa</button>
+						</td>
+					</tr>
+				`);
+            });
+        }
+    </script>
+}

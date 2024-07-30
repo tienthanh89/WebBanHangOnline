@@ -1,0 +1,411 @@
+﻿@{
+    ViewData["Title"] = "roles";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section search {
+    <!-- Search -->
+    @*render search partial view*@
+    @{
+        await Html.RenderPartialAsync("SearchPartial");
+    }
+    <!-- /Search -->
+}
+
+<div class="card flex-grow-1">
+    <div class="card-header text-end">
+        <button type="button" class="btn btn-danger" onclick="deleteCheckedRole()">
+            <i class='bx bx-trash-alt me-1'></i>Xóa
+        </button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCreateUpdateAccount">
+            <i class='bx bx-plus me-1'></i>Thêm mới
+        </button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive text-nowrap">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="text-center">
+                        <th>
+                            <input type="checkbox" id="select-all" onchange="selectAll()" />
+                        </th>
+                        <th>Tên quyền</th>
+                        <th>Mô tả</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody id="listrole">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@{
+    await Html.RenderPartialAsync("ModalCreateUpdateRolePartial");
+    await Html.RenderPartialAsync("ModalCreateUpdatePermissionPartial");
+    await Html.RenderPartialAsync("ConfirmDeleteRoleModal");
+    await Html.RenderPartialAsync("ConfirmDeleteRoleCheckedModal");
+}
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(() => {
+            RenderTableRole();
+
+            $('input[name="searchStr"]').keydown(function (event) {
+                if (event.keyCode === 13) { // Phím Enter
+                    Search(); // Gọi hàm Search
+                }
+            });
+        });
+
+        function RenderTableRole() {
+            $.ajax({
+                url: '/assignment/roles/all',
+                type: 'get',
+                success: function (data) {
+                    $('#listrole').empty();
+                    if (data.length > 0) {
+                        data.forEach((item, index) => {
+                            if (item.name == 'Admin' || item.name == 'Customer') {
+                                $('#listrole').append(`
+                                    <tr>
+                                        <td class="text-center"><input class="checkboxItem" type="checkbox" value=${item.id} disabled/></td>
+                                        <td>${item.name}</td>
+                                        <td>Luôn hoạt động</td>
+                                        <td class="${item.isActive ? "text-success" : "text-danger"}">${item.isActive ? "Hoạt động" : "Khóa"}</td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-primary"
+                                                    disabled>
+                                                    Sửa
+                                            </button>
+                                            <button type="button" class="btn btn-danger"
+                                                    onclick="DeleteRole('${item.id}')"
+                                                    disabled>
+                                                    Xóa
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `);
+                            }
+                        });
+                        data.forEach((item, index) => {
+                            if (item.name != 'Admin' && item.name != 'Customer') {
+                                $('#listrole').append(`
+                                    <tr>
+                                        <td class="text-center">
+                                            <input class="checkboxItem check-all" type="checkbox"
+                                                    value=${item.id}>
+                                        </td>
+                                        <td>${item.name}</td>
+                                        <td>${item.mota}</td>
+                                        <td >
+                                            <a href="javascript:void(0)" 
+                                               onclick="changeStatus('${item.id}')"
+                                               class="${item.isActive ? "text-success" : "text-danger"}">
+                                               ${item.isActive ? "Hoạt động" : "Khóa"}
+                                            </a>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-primary"
+                                                    onclick="EditRole('${item.id}')"
+                                                    >
+                                                    Sửa
+                                            </button>
+                                            <button type="button" class="btn btn-danger"
+                                                    onclick="DeleteRole('${item.id}')"
+                                                    >
+                                                    Xóa
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `);
+                            }
+                        });
+                    }
+                    else {
+                        $('#listrole').append(`
+                                        <tr>
+                                            <td class="text-center" colspan="6">Không có dữ liệu</td>
+                                        </tr>
+                                    `);
+                        console.log(data);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function changeStatus(id){
+            $.ajax({
+                type: 'put',
+                url: '/assignment/roles/changeStatus',
+                data: {
+                    Id: id
+                },
+                success: function (result) {
+                    RenderTableRole();
+                }, 
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+
+        function CreateUpdateAccount() {
+            let id = $('#idRole').val();
+            let name = $('#tenquyen').val();
+            let mota = $('#mota').val();
+            let isActive = $('#kichhoat').is(':checked');
+
+            if (id == '') {
+                $.ajax({
+                    type: 'post',
+                    url: '/assignment/roles/create',
+                    data: {
+                        name: name,
+                        mota: mota,
+                        isActive: isActive
+                    },
+                    success: function (data) {
+                        RenderTableRole();
+                        $('#modalCreateUpdateAccount').modal('hide');
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+            else
+            {
+                $.ajax({
+                    type: 'put',
+                    url: '/assignment/roles/edit',
+                    data: {
+                        id:id,
+                        name: name,
+                        mota: mota,
+                        isActive: isActive
+                    },
+                    success: function (data) {
+                        RenderTableRole();
+                        $('#modalCreateUpdateAccount').modal('hide');
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            }
+            
+        }
+
+        function EditRole(id) {
+            $.ajax({
+                type: 'get',
+                url: '/assignment/roles/getbyid',
+                data: {
+                    id: id,
+                },
+                success: function (data) {
+                    RenderModalIdentityUpdate(data);
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function RenderModalIdentityUpdate(data) {
+            $('#idRole').val(data.id);
+            $('#tenquyen').val(data.name);
+            $('#mota').val(data.mota);
+            $('#kichhoat').prop('checked', data.isActive ? true : false);
+            $('#modalCreateUpdateAccount').modal('show');
+        }
+
+        $('#upsertidentity').click(() => {
+            let id = $('#idIdentityRole').val();
+            let name = $('#tenquyenidentity').val();
+
+            $.ajax({
+                type: 'put',
+                url: '/assignment/roles/updateidentity',
+                data: {
+                    id: id,
+                    name: name,
+                },
+                success: function (data) {
+                    
+                    RenderTableRole();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $("#modalCreateUpdateAccount").on("hide.bs.modal", () => {
+            ClearForm();
+        });
+
+        function ClearForm() {
+            $('#idRole').val('');
+            $('#tenquyen').val('');
+            $('#mota').val('');
+            $('#kichhoat').prop('checked', true);
+        }
+
+
+        function DeleteRole(id) {
+            $('#confirmDeleteRoleModal').modal('show');
+
+            $(document).on('click', '#confirmDeleteRole', function () {
+                handleDeleteRole(id);
+                $('#confirmDeleteRoleModal').modal('hide');
+            });
+        }
+
+        function handleDeleteRole(id) {
+            $.ajax({
+                type: 'delete',
+                url: '/assignment/roles/deleterole',
+                data: {
+                    id:id
+                },
+                success: function (data) {
+                    RenderTableRole();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function selectAll() {
+            var isCheck = $("#select-all").is(":checked");
+            if (isCheck) {
+                $(".check-all").prop("checked", true);
+            }
+            else {
+                $(".check-all").prop("checked", false);
+            }
+        }
+
+        function deleteCheckedRole() {
+            $('#confirmDeleteRoleCheckedModal').modal('show');
+            var arrId = new Array();
+
+            $(document).on('click', '#confirmDeleteRoleChecked', function () {
+                var checkedBoxes = $('.check-all').filter(':checked');
+                checkedBoxes.each(function () {
+                    arrId.push($(this).val());
+                });
+                handleDeleteCheckedRole(arrId);
+                $('#confirmDeleteRoleCheckedModal').modal('hide');
+            });
+        }
+
+        function handleDeleteCheckedRole(id) {
+            $.ajax({
+                type: 'delete',
+                url: '/assignment/roles/deleterangerole',
+                data: {
+                    listId: id
+                },
+                success: function (data) {
+                    location.reload();
+                    //toastr.success('Xóa vai trò thành công');
+                },
+                error: function (error) {
+                    consol.log(error);
+                }
+            });
+        }
+
+        function Search() {
+            let searchStr = $('input[name="searchStr"]').val();
+            $.ajax({
+                type: 'get',
+                url: '/assignment/role/search',
+                data: {
+                    searchStr: searchStr
+                },
+                success: function (data) {
+                    if (data.length > 0) {
+                        LoadData(data);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        };
+
+        function LoadData(data) {
+            console.log(data);
+            $('#listrole').empty();
+            data.forEach((item, index) => {
+                if (item.name == 'Admin' || item.name == 'Customer') {
+                    $('#listrole').append(`
+                        <tr>
+                            <td class="text-center"><input class="checkboxItem" type="checkbox" value=${item.id} disabled/></td>
+                            <td>${item.name}</td>
+                            <td>Luôn hoạt động</td>
+                            <td class="${item.isActive ? "text-success" : "text-danger"}">${item.isActive ? "Hoạt động" : "Khóa"}</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-primary"
+                                        disabled>
+                                        Sửa
+                                </button>
+                                <button type="button" class="btn btn-danger"
+                                        onclick="DeleteRole('${item.id}')"
+                                        disabled>
+                                        Xóa
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+                }
+            });
+            data.forEach((item, index) => {
+                if (item.name != 'Admin' && item.name != 'Customer') {
+                    $('#listrole').append(`
+                        <tr>
+                            <td class="text-center">
+                                <input class="checkboxItem check-all" type="checkbox"
+                                        value=${item.id}>
+                            </td>
+                            <td>${item.name}</td>
+                            <td>${item.mota}</td>
+                            <td >
+                                <a href="javascript:void(0)"
+                                    onclick="changeStatus('${item.id}')"
+                                    class="${item.isActive ? "text-success" : "text-danger"}">
+                                    ${item.isActive ? "Hoạt động" : "Khóa"}
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-primary"
+                                        onclick="EditRole('${item.id}')"
+                                        >
+                                        Sửa
+                                </button>
+                                <button type="button" class="btn btn-danger"
+                                        onclick="DeleteRole('${item.id}')"
+                                        >
+                                        Xóa
+                                </button>
+                            </td>
+                        </tr>
+                    `);
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,150 @@
+﻿@model WebBanHangOnline.Models.ViewModels.TbProductVM
+@{
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section cdn {
+    @*     <script src="https://cdn.tiny.cloud/1/thty8oxkq898xj1iv9cifkcu4n3mqz3di55n1krs9mgiq2ss/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+ *@
+}
+
+<!-- Main content -->
+<section class="content">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Thông tin danh mục</h3>
+        </div>
+        <div class="card-body">
+            <div class="bs-stepper-content">
+                <!--gửi form tới action Add trong Category và thực thi action đó-->
+                <!--asp-area="admin" asp-action="Add" asp-controller="Category"-->
+                <!--Form muốn tải ảnh lên controller phải có attribute enctype="multipart/form-data"-->
+                <form method="post" enctype="multipart/form-data">
+                    <input asp-for="@Model.TbProduct.Id" hidden />
+                    @* <input asp-for="@Model.TbProduct.ImageUrl" hidden /> *@
+                    <!-- your steps content here -->
+                    <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+                        <div class="d-flex justify-content-between gap-3">
+                            <div class="flex-grow-1">
+                                <div class="form-group mb-3">
+                                    <label asp-for="@Model.TbProduct.Title" class="ms-2">Tên sản phẩm</label>
+                                    <input asp-for="@Model.TbProduct.Title" class="form-control " placeholder="Tên sản phẩm" autofocus>
+                                    <span asp-validation-for="@Model.TbProduct.Title" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label asp-for="@Model.TbProduct.ImageUrl">Ảnh đại diện</label>
+                                    <input type="file" id="ImageUrl" name="file" class="form-control"></>
+                                </div>
+                            </div>
+                            <div id="areaimage" class=" ">
+                                <img src="@Model.TbProduct.ImageUrl" width="300"/>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.TbProduct.Detail">Chi tiết</label>
+                            <textarea id="textarea" asp-for="@Model.TbProduct.Detail" class="form-control" placeholder=""></textarea>
+                            <span asp-validation-for="@Model.TbProduct.Detail" class="text-danger"></span>
+                        </div>
+                        @* <div class="form-group mb-3 d-flex">
+                            <label asp-for="@Model.TbProduct.IsActive">Hiển thị</label>
+                            @if (Model.TbProduct.IsActive)
+                            {
+                                <input type="checkbox" asp-for="@Model.TbProduct.IsActive" class="mx-4" style="width:6rem" placeholder="" checked>
+                            }
+                            else
+                            {
+                                <input type="checkbox" asp-for="@Model.TbProduct.IsActive" class="mx-4" style="width:6rem" placeholder="">
+                            }
+                            <span asp-validation-for="@Model.TbProduct.Detail" class="text-danger"></span>
+                        </div> *@
+                        <div class="form-group mb-3 d-flex gap-5">
+                            <div class="d-flex">
+                                <label asp-for="@Model.TbProduct.IsActive" >Hiển thị</label>
+                                @if (Model.TbProduct.IsActive)
+                                {
+                                    <input type="checkbox" asp-for="@Model.TbProduct.IsActive" class="mx-4" style="width:6rem" placeholder="" checked>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" asp-for="@Model.TbProduct.IsActive" class="mx-4" style="width:6rem" placeholder="">
+                                }
+                                <span asp-validation-for="@Model.TbProduct.Detail" class="text-danger"></span>
+                            </div>
+
+                            <div class="d-flex">
+                                <label asp-for="@Model.TbProduct.IsHot" class="mx-3">Hot </label>
+                                <input type="checkbox" asp-for="@Model.TbProduct.IsHot" class=" " style="transform:scale(1.3)" placeholder="">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="@Model.TbProduct.ProductCategoryId">Danh mục sản phẩm</label>
+                            <select asp-for="@Model.TbProduct.ProductCategoryId" asp-items="@Model.CategoryList" class="form-select">
+                                <option disabled selected>--Selecte Category--</option>
+                            </select>
+                            <span asp-validation-for="@Model.TbProduct.ProductCategoryId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3 d-flex gap-5">
+                            <div class="form-group mb-3">
+                                <label asp-for="@Model.TbProduct.Price">Giá</label>
+                                <input asp-for="@Model.TbProduct.Price" class="form-control" placeholder="Giá">
+                                <span asp-validation-for="@Model.TbProduct.Price" class="text-danger"></span>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="@Model.TbProduct.PriceSale">Giá khuyến mãi</label>
+                                <input asp-for="@Model.TbProduct.PriceSale" class="form-control" placeholder="Giá khuyến mãi">
+                                <span asp-validation-for="@Model.TbProduct.PriceSale" class="text-danger"></span>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label asp-for="@Model.TbProduct.Quantity">Số lượng</label>
+                                <input asp-for="@Model.TbProduct.Quantity" class="form-control" placeholder="Số lượng">
+                                <span asp-validation-for="@Model.TbProduct.Quantity" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <a class="btn btn-primary" href="/admin/post">Quay lại</a>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->
+@section scripts {
+    <script>
+        $(document).ready(() => {
+            tinymce.init({
+                selector: '#textarea',
+                height: 200,
+                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+            });
+        })
+
+        $("#ImageUrl").change(function () {
+            $('#areaimage').empty();
+            $('#areaimage').append(`<img src="${URL.createObjectURL(this.files[0])}" width="300" class="img-fluid" alt="Image" />`);
+        })
+
+    </script>
+
+    @{
+        // Xác thực tự động ở phía máy khách
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+
+}

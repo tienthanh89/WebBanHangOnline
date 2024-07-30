@@ -1,20 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WebBanHangOnline.Helper;
 using WebBanHangOnline.Models;
+using WebBanHangOnline.Models.DbContext;
+using WebBanHangOnline.Models.Entity;
 using WebBanHangOnline.Models.ViewModels;
 
 namespace WebBanHangOnline.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = $"{TbStaticField.Role_Admin}")]
     public class NewsController : Controller
     {
-        private readonly WebBanHangDemoContext _db;
+        private readonly WebBanHangOnlineContext _db;
         // Tạo môi trường luu trữu web
         private readonly IWebHostEnvironment _webHostEnvironment;
 
 
-        public NewsController(WebBanHangDemoContext db, IWebHostEnvironment webHostEnvironment)
+        public NewsController(WebBanHangOnlineContext db, IWebHostEnvironment webHostEnvironment)
         {
             _db = db;
             _webHostEnvironment = webHostEnvironment;
@@ -58,12 +64,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
 
                     tbNewsVM.TbNews.ImageUrl = @"\images\admin\news\" + fileName;
                 }
-                tbNewsVM.TbNews.CreatedDate = DateTime.Now;
-                tbNewsVM.TbNews.ModifierDate = DateTime.Now;
-                if (tbNewsVM.TbNews.Title != null)
-                {
-                    tbNewsVM.TbNews.Alias = WebBanHangOnline.Models.Common.Filter.FilterChar(tbNewsVM.TbNews.Title);
-                }
+                tbNewsVM.TbNews.Id = Guid.NewGuid();
 
                 //tbNews.tbCategory = _db.TbNews.Include(n =>n.tbCategory).FirstOrDefault(n=>n.Id == id);
 
@@ -118,35 +119,14 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
                 if (tbNews_Old != null)
                 {
                     _db.Entry(tbNews_Old).State = EntityState.Detached;
-                    tbNewsVM.TbNews.CreatedDate = tbNews_Old.CreatedDate;
-                    tbNewsVM.TbNews.CreatedBy = tbNews_Old.CreatedBy;
-                    tbNewsVM.TbNews.ModifierDate = DateTime.Now;
-                    if (tbNewsVM.TbNews.Title != null)
-                    {
-                        tbNewsVM.TbNews.Alias = WebBanHangOnline.Models.Common.Filter.FilterChar(tbNewsVM.TbNews.Title);
-                    }
+
                     if (file == null)
                     {
                         tbNewsVM.TbNews.ImageUrl = tbNews_Old.ImageUrl;
                     }
                     else
                     {
-                        // Tạo đường dẫn tới thư mục wwroot
-                        // Chuẩn hóa lại tên tệp thành duy nhất
-                        // Tạo tên duy nhất cho ảnh, gắn phần mở rộng của file tải lên vào tên ảnh
-                        // Tạo đường dẫn mới cho file ảnh về wwwroot
-                        // Tạo FileStream mới tới vị trí muốn luu file
-                        // Copy file tải lên vào fileStream
-                        // Tạo địa chỉ hoàn chỉnh cho file
-                        string wwwRootPath = _webHostEnvironment.WebRootPath;
-                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                        string filePath = Path.Combine(wwwRootPath, @"images\admin\news");
-                        using (var fileStream = new FileStream(Path.Combine(filePath, fileName), FileMode.Create))
-                        {
-                            file.CopyTo(fileStream);
-                        }
-
-                        tbNewsVM.TbNews.ImageUrl = @"\images\admin\news\" + fileName;
+                        tbNewsVM.TbNews.ImageUrl = FilesManagement.uploadImage(file);
                     }
 
                     _db.Update(tbNewsVM.TbNews);
@@ -158,7 +138,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(int? id)
+        public IActionResult Delete(Guid? id)
         {
             var item = _db.TbNews.FirstOrDefault(x => x.Id == id);
             if (item != null)
@@ -171,7 +151,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult changeStatus(int id)
+        public IActionResult changeStatus(Guid id)
         {
             var item = _db.TbNews.FirstOrDefault(x => x.Id == id);
             if (item != null)
@@ -191,7 +171,7 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
             return Ok(items);
         }
 
-        public IActionResult edit_Ajax(int? id)
+        public IActionResult edit_Ajax(Guid? id)
         {
             var item = new TbNewsVM()
             {
@@ -213,19 +193,38 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> add_Ajax(TbNews news)
+        public async Task<IActionResult> add_Ajax(TbNews news, IFormFile file, int? id)
         {
-
-            news.CreatedDate = DateTime.Now;
-            news.ModifierDate = DateTime.Now;
-            if (news.Title != null)
+            if (id == null || id == 0)
             {
-                news.Alias = WebBanHangOnline.Models.Common.Filter.FilterChar(news.Title);
+                if (file != null)
+                {
+                    news.ImageUrl = FilesManagement.uploadImage(file);
+                }
+                await _db.TbNews.AddAsync(news);
+                await _db.SaveChangesAsync();
+                return Ok();
             }
 
-            _db.TbNews.Add(news);
-            _db.SaveChanges();           
-            return Ok();
+
+            var tbNews_Old = _db.TbNews.Find(id);
+            if (tbNews_Old != null)
+            {
+                tbNews_Old.Title = news.Title;
+                if (file != null)
+                {
+                    tbNews_Old.ImageUrl = FilesManagement.uploadImage(file);
+                }
+                tbNews_Old.Detail = news.Detail;
+                tbNews_Old.Description = news.Description;
+                tbNews_Old.IsActive = news.IsActive;
+
+                _db.Update(tbNews_Old);
+                _db.SaveChanges();
+                return Ok();
+
+            }
+            return NotFound();
         }
     }
 }
@@ -269,4 +268,25 @@ namespace WebBanHangOnline.Areas.Admin.Controllers
 //{
 //    var items = _db.TbNews.Include(n => n.tbCategory).OrderByDescending(x => x.Id).ToList();
 //    return View(items);
+//}
+
+
+//else
+//{
+//    // Tạo đường dẫn tới thư mục wwroot
+//    // Chuẩn hóa lại tên tệp thành duy nhất
+//    // Tạo tên duy nhất cho ảnh, gắn phần mở rộng của file tải lên vào tên ảnh
+//    // Tạo đường dẫn mới cho file ảnh về wwwroot
+//    // Tạo FileStream mới tới vị trí muốn luu file
+//    // Copy file tải lên vào fileStream
+//    // Tạo địa chỉ hoàn chỉnh cho file
+//    string wwwRootPath = _webHostEnvironment.WebRootPath;
+//    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+//    string filePath = Path.Combine(wwwRootPath, @"images\admin\news");
+//    using (var fileStream = new FileStream(Path.Combine(filePath, fileName), FileMode.Create))
+//    {
+//        file.CopyTo(fileStream);
+//    }
+
+//    tbNewsVM.TbNews.ImageUrl = @"\images\admin\news\" + fileName;
 //}

@@ -14,29 +14,50 @@ $("#open-modal").click(() => {
     });
 });
 
+
 // Hàm sử lý sự kiện ấn nút add-new
 $("#add-news").click(() => {
-    tinyMCE.triggerSave();
-    $.ajax({
-        type: 'post',
-        url: '/admin/news/add_Ajax',
-        data: {
-            Title: $("#Title").val(),
-            Description: $("#Description").val() ,   
-            Detail: $("#Detail").val(),
-            ImageUrl: $("#ImageUrl").val(),
-            IsActive: $("#IsActive").val() ,
-            CategoryId: $("#CategoryId").val() ,
-            SeoTitle: $("#SeoTitle").val() ,
-            SeoDescription: $("#SeoDescription").val() ,
-            SeoKeyWords: $("#SeoKeyWords").val() 
-        },
-        success: function (result) {
-            $("#news-info").modal('hide');
-            loadData();
-        },
-        errorr: function (error) {console.log(error)},
-    });
+    /*tinyMCE.triggerSave();*/
+    //var id = $("#idNews").val();
+    //var Title = $("#Title").val();
+    //var Description = $("#Description").val();
+    //var Detail = $("#Detail").val();
+    //var ImageUrl = $("#ImageUrl").val();
+    //var IsActive = $("#IsActive").val();
+    //var CategoryId = $("#CategoryId").val();
+    //var file = $("#ImageUrl")[0].file[0];
+    //var SeoTitle = $("#SeoTitle").val();
+    //var SeoDescription = $("#SeoDescription").val();
+    //var CategoryId = $("#CategoryId").val();
+
+
+    // Tạo formdata
+    //var formData = new FormData();
+    //formData.append('file', file);
+    //formData.append('Id', id);
+    //formData.append('Title', Title);
+    //formData.append('Description', Description);
+    //formData.append('Detail', Detail);
+    //formData.append('ImageUrl', ImageUrl);
+    //formData.append('IsActive', IsActive);
+    //formData.append('CategoryId', CategoryId);
+    //formData.append('SeoTitle', SeoTitle);
+    //formData.append('SeoDescription', SeoDescription);
+    //formData.append('SeoKeyWords', SeoKeyWords);
+
+    console.log("a");
+    //$.ajax({
+    //    type: 'post',
+    //    url: '/admin/news/add_Ajax',
+    //    data: formData,
+    //    contentType: false,
+    //    processData: false,
+    //    success: function (result) {
+    //        $("#news-info").modal('hide');
+    //        loadData();
+    //    },
+    //    errorr: function (error) {console.log(error)},
+    //});
 });
 
 // Hàm xử lý sự kiện ấn nút Sửa Ajax

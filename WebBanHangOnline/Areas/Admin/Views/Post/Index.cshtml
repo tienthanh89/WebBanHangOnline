@@ -22,7 +22,7 @@
 }
 
 <!-- Main content -->
-<section id="ListCategory" class="content" style="height:100%">
+<section id="ListCategory" class="content flex-grow-1" style="height:100%">
     <div class="card" style="height:100%">
         <div class="card-header d-flex justify-content-between">
             <h2 class="card-title"><strong>@ViewData["Title"]</strong></h2>
@@ -42,7 +42,6 @@
                         <th>STT</th>
                         <th>Hình ảnh</th>
                         <th>Tiêu đề</th>
-                        <th>Ngày tạo</th>
                         <th>Hiển thị</th>
                         <th>Danh mục</th>
                         <th>Actions</th>
@@ -61,7 +60,6 @@
                                 <td class="stt">@i</td>
                                 <td><img src="@item.Post.ImageUrl" style="width:50px" /></td>
                                 <td>@item.Post.Title</td>
-                                <td>@item.Post.CreatedDate.ToString()</td>
                                 <td class="">
                                     @if (item.Post.IsActive)
                                     {
@@ -80,7 +78,7 @@
                                     @{
                                         if (@item.Category != null)
                                         {
-                                            <span>@item.Category.Title</span>
+                                                <span>@item.Category.Title</span>
                                         }
                                     }
                                 </td>
@@ -218,27 +216,26 @@
 
         function changeStatus(id) {
             $.ajax({
-                type:'post',
-                url:'/Admin/Post/changeStatus',
+                type: 'post',
+                url: '/Admin/Post/changeStatus',
                 data: {
-                    Id:id
+                    Id: id
                 },
-                success: function (result) {                    
-                    if (result.isActive == true){
+                success: function (result) {
+                    if (result.isActive == true) {
                         $("#isActive_" + result.id).removeClass("text-danger");
                         $("#isActive_" + result.id).removeClass("bx-x-circle");
                         $("#isActive_" + result.id).addClass("bx-check-circle");
                         $("#isActive_" + result.id).addClass("text-success");
                     }
-                    else if (result.isActive == false)  
-                    {
+                    else if (result.isActive == false) {
                         $("#isActive_" + result.id).removeClass("text-success");
                         $("#isActive_" + result.id).removeClass("bx-check-circle");
                         $("#isActive_" + result.id).addClass("text-danger");
                         $("#isActive_" + result.id).addClass("bx-x-circle");
-                    }                    
+                    }
                 }
-            })            
+            });            
         }
 
         function selectAll() {

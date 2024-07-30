@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebBanHangOnline.Models.ViewModels
 {
     public class TbProductVM
     {
-        public TbProduct tbProduct { get; set; }
-        public IEnumerable<SelectListItem> CategoryList{ get; set; }
+        public TbProduct? TbProduct { get; set; }
+        [ValidateNever]
+        public IEnumerable<SelectListItem>? CategoryList{ get; set; }
     }
 }

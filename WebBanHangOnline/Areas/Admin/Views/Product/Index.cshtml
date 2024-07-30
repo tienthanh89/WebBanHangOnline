@@ -1,194 +1,156 @@
-﻿@model X.PagedList.IPagedList<WebBanHangOnline.Models.TbProduct>
+﻿@model List<WebBanHangOnline.Models.TbProduct>
+@using System.Globalization
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using X.PagedList.Mvc.Core;
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-@{
-    var controller = "product";
-}
 
 <!--Aside Body-->
-
 @section search {
     <!-- Search -->
-    <div class="navbar-nav align-items-center" style="width:100%">
-        <form asp-controller=@controller asp-action="index" method="get" style="width:100%">
-            <div class="nav-item d-flex align-items-center" style="width:100%">
-                <button type="submit" class="btn btn-light btn-sm">
-                    <i class="bx bx-search fs-4 lh-0"></i>
-                </button>
-                <input type="text"
-                       class="form-control border-1 mx-3 shadow-none flex-grow-1"
-                       placeholder="Search..."
-                       aria-label="Search..."
-                       name="searchStr" />
-            </div>
-        </form>
-    </div>
+    @*render search partial view*@
+    @{
+        await Html.RenderPartialAsync("SearchPartial");
+    }
     <!-- /Search -->
 }
 
+@{
+    CultureInfo viVN = new CultureInfo("vi-VN");
+}
+
 <!-- Main content -->
-<section id="ListCategory" class="content" style="height:100%">
+<section id="ListCategory" class="content flex-grow-1" style="height:100%">
     <div class="card" style="height:100%">
         <div class="card-header d-flex justify-content-between">
             <h2 class="card-title"><strong>@ViewData["Title"]</strong></h2>
 
             <div class="card-tools ">
-                <a href="/admin/@controller/add_mvc" class="btn btn-primary">Thêm mới MVC</a>
-                <a href="#" class="btn btn-primary shadow rounded" data-bs-toggle="modal" data-bs-target="#category-info">Thêm mới Ajax</a>
-                <a class="btn btn-danger" id="btnDeleteAll" onclick="deleteChecked()">Xóa</a>
+                <a href="/admin/product/add_mvc" class="btn btn-primary">Thêm mới</a>
+                <a class="btn btn-danger text-white" id="btnDeleteAll" onclick="deleteChecked()">Xóa</a>
             </div>
         </div>
         <div class="table-responsive text-nowrap flex-grow-1">
             <table class="table ">
                 <thead>
-                    <tr>
-                        <th>
-                            <input type="checkbox" class="form-switch-md" id="select-all" onchange="selectAll()" style="transform: scale(1.5)" />
-                        <th>STT</th>
-                        <th>Hình ảnh</th>
-                        <th>Tên sản phẩm</th>
-                        <th>Danh mục</th>
-                        <th>Số lượng</th>
-                        <th>Gía</th>
-                        <th>Ngày tạo</th>
-                        <th>Hiển thị</th>
-                        <th>Actions</th>
-                    </tr>
+                <tr>
+                    <th>
+                    <input type="checkbox" class="form-switch-md" id="select-all" onchange="selectAll()" style="transform: scale(1.5)" />
+                    <th>STT</th>
+                    <th>Hình ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>
+                            <a href=" javascript:void(0)" onclick="sortByCategory()" class="text-black">
+                            Danh mục
+                        </a>
+                    </th>
+                    <th>Số lượng</th>
+                    <th>Gía</th>
+                    <th>Hiển thị</th>
+                    <th>Actions</th>
+                </tr>
                 </thead>
-                <tbody id="list-category" class="table-border-bottom-0">
-                    @if (Model != null)
+                <tbody id="list-product" class="table-border-bottom-0">
+                @if (Model != null)
+                {
+                    var i = 1;
+                    foreach (var item in @Model)
                     {
-                        var i = 1;
-                        foreach (var item in @Model)
-                        {
-                            <tr id="trow_@item.Id">
-                                <td>
-                                    <input type="checkbox" class="check-all" style="transform: scale(1.5)" value="@item.Id" id="check_@item.Id" />
-                                </td>
-                                <td class="stt">@i</td>
-                                <td><img src="@item.ImageUrl" style="width:50px" /></td>
-                                <td>@item.Title</td>
-                                <td>
-                                    @if(item.tbProductCategory!=null){
-                                        @item.tbProductCategory.Title
-                                    }
-                                </td>
-                                <td>@item.Quantity</td>
-                                <td>@item.Price</td>
-                                <td>@item.CreatedDate.ToString()</td>
-                                <td class="">
-                                    @if (item.IsActive)
-                                    {
-                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.Id))">
-                                            <i id="isActive_@item.Id" class='bx bx-check-circle text-success' style="transform: scale(1.5)"></i>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <a href="javascript:void(0)" onclick="changeStatus(@(item.Id))">
-                                            <i id="isActive_@item.Id" class='bx bx-x-circle text-danger' style="transform: scale(1.5)"></i>
-                                        </a>
-                                    }
-                                </td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" asp-controller="product" asp-action="edit_mvc" asp-route-Id="@item.Id"><i class="bx bx-edit-alt me-1"></i>Sửa MVC</a>
-                                            <a class="dropdown-item" onclick="editCategoryAjax('@item.Id')"><i class="bx bx-edit-alt me-1"></i>Sửa Ajax</a>
-                                            <a class="dropdown-item" asp-controller="product" asp-action="delete" asp-route-Id="@item.Id"><i class="bx bx-trash me-1"></i> Xóa MVC</a>
-                                            <a data-id="@item.Id" class="dropdown-item" onclick="deleteCategory('@(item.Id)')"><i class="bx bx-trash me-1"></i> Xóa Ajax</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            i++;
-
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td style="border:0" colspan="4">Không có danh mục</td>
+                        <tr id="trow_@item.Id">
+                            <td>
+                                <input type="checkbox" class="check-all" style="transform: scale(1.5)" value="@item.Id" id="check_@item.Id" />
+                            </td>
+                            <td class="stt">@i</td>
+                            <td><img src="@item.ImageUrl" style="width:50px" /></td>
+                            <td>@item.Title</td>
+                            <td>
+                                @if (item.tbProductCategory != null)
+                                {
+                                    @item.tbProductCategory.Title
+                                }
+                            </td>
+                            <td>@item.Quantity</td>
+                                
+                                <td>@item.Price.ToString("c", viVN)</td>
+                            <td class="">
+                                @if (item.IsActive)
+                                {
+                                    <a href="javascript:void(0)" onclick="changeStatus('@(item.Id)')">
+                                        <i id="isActive_@item.Id" class='bx bx-check-circle text-success' style="transform: scale(1.5)"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:void(0)" onclick="changeStatus('@(item.Id)')">
+                                        <i id="isActive_@item.Id" class='bx bx-x-circle text-danger' style="transform: scale(1.5)"></i>
+                                    </a>
+                                }
+                            </td>
+                            <td class="d-flex gap-2">
+                                <a class="btn btn-warning" asp-controller="Product" asp-action="Edit_Mvc" asp-route-Id="@item.Id"><i class="bx bx-edit-alt me-1"></i>Sửa</a>
+                                <a href="javascript:void(0)" class="btn btn-danger" onclick="deleteProduct('@(item.Id)')">
+                                    <i class="bx bx-trash me-1"></i> Xóa
+                                </a>
+                            </td>
                         </tr>
+                        i++;
+
                     }
+                }
+                else
+                {
+                    <tr>
+                        <td style="border:0" colspan="4">Không có danh mục</td>
+                    </tr>
+                }
                 </tbody>
 
             </table>
-                        
+
         </div>
-        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
-   {
-       MaximumPageNumbersToDisplay = 2,
-       LiElementClasses = new string[] { "page-item" },
-       PageClasses = new string[] { "page-link" },
+        @* @Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
+        {
+            MaximumPageNumbersToDisplay = 2,
+            LiElementClasses = new string[] { "page-item" },
+            PageClasses = new string[] { "page-link" },
 
-   })
+        }) *@
     </div>
-
 </section>
 <!-- /.content -->
-<!-- Modal Add -->
-<div class="modal fade" id="category-info" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="inforTaskLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!--Tiêu đề modal-->
-            <div class="modal-header bg-primary">
-                <h5 class="modal-title text-white" id="infotasklabel">Thông tin danh mục</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <!--Thân modal-->
-            <form>
-                <div class="modal-body">
-                    <input type="text" id="idCategory" value="" hidden />
-                    <div class="mb-3">
-                        <label for="Title" class="form-label fw-bold">Tên danh mục</label>
-                        <input type="text" class="form-control" id="Title" name="Title" placeholder="Tên danh mục" autofocus>
-                    </div>
-                    <div class="mb-3">
-                        <label for="Description" class="form-label fw-bold">Mô tả</label>
-                        <input type="text" class="form-control" id="Description" name="Description" placeholder="Mô tả">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Position" class="form-label fw-bold">Thứ tự</label>
-                        <input type="text" class="form-control" id="Position" name="Position" placeholder="">
-                    </div>
-                    <div class="mb-3">
-                        <label for="SeoTitle" class="form-label fw-bold">SeoTitle</label>
-                        <input type="text" class="form-control" id="SeoTitle" name="SeoTitle" placeholder="">
-                    </div>
-                    <div class="mb-3">
-                        <label for="SeoDescription" class="form-label fw-bold">SeoDescription</label>
-                        <input type="text" class="form-control" id="SeoDescription" name="SeoDescription" placeholder="">
-                    </div>
-                    <div class="mb-3">
-                        <label for="SeoDescription" class="form-label fw-bold">SeoKeyWords</label>
-                        <input type="text" class="form-control" id="SeoKeyWords" name="SeoKeyWords" placeholder="">
-                    </div>
-                </div>
 
-                <!--Cụm nút nhấn-->
-                <div class="modal-footer">
-                    <a href="javascript:void()" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy bỏ</a>
-                    <a id="add-category" href="javascript:void(0)" class="btn btn-primary">Ok</a>
-                </div>
-            </form>
+<!--confirm Delete Modal-->
+@{
+    await Html.RenderPartialAsync("ConfirmDeleteModal");
+}
 
-        </div>
-    </div>
-</div>
-
+<!--confirm delete checked modal-->
+@{
+    await Html.RenderPartialAsync("ConfirmDeleteCheckedModal");
+}
 
 @section scripts {
+    @{
+        <partial name="_ValidationScriptsPartial"/>
+    }
     <script>
         $(document).ready(() => {
+            $('input[name="searchStr"]').keydown(function (event) {
+                if (event.keyCode === 13) { // Phím Enter
+                    Search(); // Gọi hàm Search
+                }
+            });
 
+            tinymce.init({
+                selector: '#Detail',
+                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+            });
         });
+
+
 
         function deleteChecked() {
             $(".check-all").each(function (index) {
@@ -198,30 +160,10 @@
             });
         }
 
-        // Hàm xóa tin tức
-        // Sau khi xóa tin tức thì cập nhật lại cột STT
-        function deleteCategory(id) {
-            $.ajax({
-                type: 'post',
-                url: '/Admin/News/Delete',
-                data: { id: id },
-                success: function (result) {
-                    if (result != null) {
-                        $('#trow_' + id).remove();
-                        $(".stt").each(function (index) {
-                            $(this).text(index + 1);
-                        });
-                    }
-                },
-                error: function () { },
-
-            });
-        }
-
         function changeStatus(id) {
             $.ajax({
                 type: 'post',
-                url: '/Admin/News/changeStatus',
+                url: '/Admin/product/changeStatus',
                 data: {
                     Id: id
                 },
@@ -242,7 +184,7 @@
             })
         }
 
-        function selectAll() { 
+        function selectAll() {
             var isCheck = $("#select-all").is(":checked");
             if (isCheck) {
                 $(".check-all").prop("checked", true);
@@ -250,6 +192,148 @@
             else {
                 $(".check-all").prop("checked", false);
             }
+        }
+
+        function deleteProduct(id) {
+            $('#confirmDeleteModal').modal('show');
+
+            $(document).on('click', '#confirmDelete', function () {
+                handleDeleteProduct(id);
+                $('#confirmDeleteModal').modal('hide');
+            });
+        }
+
+        function deleteChecked() {
+            $('#confirmDeleteCheckedModal').modal('show');
+            var arrId = new Array();
+
+            $(document).on('click', '#confirmDeleteCheckedModal', function () {
+                var checkedBoxes = $('.check-all').filter(':checked');
+                checkedBoxes.each(function () {
+                    arrId.push($(this).val());
+                })
+                handleDeleteCheckedProduct(arrId);
+                $('#confirmDeleteCheckedModal').modal('hide');
+            });
+        }
+
+        function handleDeleteProduct(id) {
+            $.ajax({
+                type: 'delete',
+                url: '/product/delete',
+                data: {
+                    Id: id
+                },
+                success: function (data) {
+                    //location.reload();
+                    //toastr.success('Xóa sản phẩm thành công');
+                    Search();
+                    
+                },
+                error: function (error) {
+                    consol.log(error);
+                }
+            });
+        }
+
+        function handleDeleteCheckedProduct(id) {
+            $.ajax({
+                type: 'delete',
+                url: '/product/deleterange',
+                data: {
+                    listId : id
+                },
+                success: function (data) {
+                    //location.reload();
+                    //toastr.success('Xóa sản phẩm thành công');
+                    Search();
+                    
+                },
+                error: function (error) {
+                    consol.log(error);
+                }
+            });
+        }
+        
+
+
+        function Search () {
+            let searchStr = $('input[name="searchStr"]').val();
+            $.ajax({
+                type: 'get',
+                url: '/product/search',
+                data: {
+                    searchStr: searchStr
+                },
+                success: function (data) {
+                    if (data.length > 0) {
+                        LoadData(data);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        };
+
+        function LoadData(data) {
+            console.log(data);
+            let i = 1;
+            $('#list-product').empty();
+            data.map((item) => {
+                let r = `
+                    <tr id="trow_${item.Id}">
+                        <td>
+                            <input type="checkbox" 
+                                    class="check-all" style="transform:scale(1.5)" 
+                                    value="${item.id}" id="check_${item.id}" />
+                        </td>
+                        <td class="stt">${i}</td>
+                        <td><img src="${item.imageUrl}" style="width:50px" /></td>
+                        <td>${item.title}</td>
+                        <td>
+                            ${item.tbProductCategory.title}
+                        </td>
+                        <td>${item.quantity}</td>
+                                    <td>${item.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
+                        <td class="">
+                            ${item.isActive ?
+                                `<a href= "javascript:void(0)" onclick = "changeStatus('${item.id}')" >
+                                    <i id="isActive_${item.id}" class='bx bx-check-circle text-success' style = "transform: scale(1.5)" > </i>
+                                </a>`
+                                :
+                                `<a href="javascript:void(0)" onclick = "changeStatus('${item.id}')" >
+                                    <i id="isActive_${item.id}" class='bx bx-x-circle text-danger' style = "transform: scale(1.5)" > </i>
+                                </a>`
+                            }
+                        </td>
+                        <td class="d-flex gap-2">
+                            <a class="btn btn-warning" asp-controller="Product" asp-action="Edit_Mvc" asp-route-Id="${item.id}"><i class="bx bx-edit-alt me-1"></i>Sửa</a>
+                            <a href="javascript:void(0)" class="btn btn-danger" onclick="deleteProduct('${item.id}')">
+                                <i class="bx bx-trash me-1"></i> Xóa
+                            </a>
+                        </td>
+                    </tr>
+                `;
+
+                i++;
+                $('#list-product').append(r);
+            });
+        }
+
+        function sortByCategory(){
+            $.ajax({
+                type: 'get',
+                url: '/product/sortbycategory',
+                success: function (data) {
+                    if (data.length > 0) {
+                        LoadData(data);
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
         }
 
         // var controllerName = '@ViewBag.ControllerName';

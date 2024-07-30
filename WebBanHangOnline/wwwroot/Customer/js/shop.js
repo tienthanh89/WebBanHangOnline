@@ -6,10 +6,11 @@
 // Vào db lấy thông tin sản phẩm theo View Model
 // chạy vòng lặp trong danh sách trả về rồi hiển thị theo mẫu
 function loadData() {
+    $("#defautSort").prop('hidden', false);
     $("#product_list").empty();
     $('.fruite-categorie > li').removeClass("bg-warning");
     $(`.fruite-categorie > li:last-child`).addClass("bg-warning");
-    alert("gg");
+
     $.ajax({
         type: 'post',
         url: '/shop/loadData',
@@ -51,6 +52,7 @@ function loadData() {
 // Vào db lấy thông tin sản phẩm theo danh mục
 // chạy vòng lặp trong danh sách trả về rồi hiển thị theo mẫu
 function loadProductCategory(id, stt) {
+    $("#defautSort").prop('hidden', false);
     $("#product_list").empty();
     $('.fruite-categorie > li').removeClass("bg-warning");
     $(`.fruite-categorie > li:nth-child(${stt})`).addClass("bg-warning");
@@ -94,6 +96,7 @@ function loadProductCategory(id, stt) {
 //href="/shopdetail/index/${item.id}"
 function shopDetail(id) {
     $("#product_list").empty();
+    $("#defautSort").prop('hidden', true);
 
     $.ajax({
         type: 'post',
